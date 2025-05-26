@@ -1,42 +1,90 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <title>Azan Countdown - Shah Alam</title>
+  <title>Waktu Azan Shah Alam</title>
   <style type="text/css">
     body {
-      background-color: #004aad;
+      margin: 0; padding: 0;
+      width: 1080px;
+      height: 1920px;
+      background: linear-gradient(135deg, #004aad, #ffd700);
       color: white;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
-      margin-top: 100px;
+      overflow: hidden;
+      position: relative;
+    }
+    #container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    #logo {
+      margin-top: 40px;
+      width: 250px;
+      height: auto;
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0% {opacity: 1; transform: scale(1);}
+      50% {opacity: 0.7; transform: scale(1.1);}
+      100% {opacity: 1; transform: scale(1);}
     }
     h1 {
-      font-weight: normal;
-      font-size: 24pt;
+      margin-top: 30px;
+      font-size: 60px;
+      font-weight: 700;
+      text-shadow: 3px 3px 8px #000;
+      animation: slideDown 2s ease forwards;
+      opacity: 0;
+    }
+    @keyframes slideDown {
+      from {opacity: 0; transform: translateY(-40px);}
+      to {opacity: 1; transform: translateY(0);}
     }
     #clock {
-      font-size: 36pt;
+      font-size: 120px;
       font-weight: bold;
-      margin: 20px 0;
+      margin: 50px 0 20px 0;
+      text-shadow: 4px 4px 6px #002060;
+      animation: glow 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      0% {text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;}
+      100% {text-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700;}
     }
     #nextAzan {
-      font-size: 14pt;
-      margin: 15px 0;
+      font-size: 40px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 3px #000;
+      animation: fadeIn 2s ease forwards;
+      opacity: 0;
+      animation-delay: 2s;
     }
     #countdown {
-      font-size: 28pt;
+      font-size: 90px;
       font-weight: bold;
-      margin: 20px 0;
-      background-color: #000080;
-      padding: 10px;
-      border: 2px solid white;
-      width: 220px;
-      margin-left: auto;
-      margin-right: auto;
+      background-color: rgba(0,0,128,0.8);
+      width: 600px;
+      margin: 30px auto;
+      border-radius: 30px;
+      padding: 20px 0;
+      box-shadow: 0 0 30px #ffd700;
+      animation: pulse 4s ease-in-out infinite;
+    }
+    @keyframes fadeIn {
+      to {opacity: 1;}
+    }
+    /* Responsive scaling fallback if device viewport smaller */
+    @media screen and (max-width:1080px) {
+      body, #container {
+        transform: scale(0.8);
+        transform-origin: top center;
+      }
     }
   </style>
   <script language="JavaScript" type="text/javascript">
-    // Azan times for Shah Alam (24h)
     var azanTimes = [
       {name: 'Fajr', time: '05:53'},
       {name: 'Dhuhr', time: '13:12'},
@@ -48,39 +96,40 @@
     function parseTimeToDate(hhmm) {
       var now = new Date();
       var parts = hhmm.split(':');
-      var dt = new Date(now.getYear() + 1900, now.getMonth(), now.getDate(), parseInt(parts[0],10), parseInt(parts[1],10), 0);
-      return dt;
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(parts[0],10), parseInt(parts[1],10), 0);
     }
 
     function getNextAzan() {
       var now = new Date();
-      for (var i = 0; i < azanTimes.length; i++) {
+      for (var i=0; i<azanTimes.length; i++) {
         var azanDate = parseTimeToDate(azanTimes[i].time);
-        if (azanDate > now) {
-          return {name: azanTimes[i].name, time: azanTimes[i].time, date: azanDate};
-        }
+        if (azanDate > now) return {name: azanTimes[i].name, time: azanTimes[i].time, date: azanDate};
       }
       var tomorrowFajr = parseTimeToDate(azanTimes[0].time);
       tomorrowFajr.setDate(tomorrowFajr.getDate() + 1);
       return {name: azanTimes[0].name, time: azanTimes[0].time, date: tomorrowFajr};
     }
 
-    function pad(num) {
-      return (num < 10 ? '0' : '') + num;
+    function pad(n) {
+      return (n < 10) ? '0' + n : n;
     }
 
     function formatTime(sec) {
-      var h = Math.floor(sec / 3600);
-      var m = Math.floor((sec % 3600) / 60);
-      var s = sec % 60;
-      return pad(h) + ':' + pad(m) + ':' + pad(s);
+      var h = Math.floor(sec/3600);
+      var m = Math.floor((sec%3600)/60);
+      var s = sec%60;
+      return pad(h)+':'+pad(m)+':'+pad(s);
     }
+
+    var beepPlayed = false;
+    var azanPlayed = false;
 
     function updateClock() {
       var now = new Date();
       var hours = pad(now.getHours());
       var minutes = pad(now.getMinutes());
       var seconds = pad(now.getSeconds());
+
       document.getElementById('clock').innerHTML = hours + ':' + minutes + ':' + seconds;
 
       var nextAzan = getNextAzan();
@@ -90,17 +139,51 @@
       if (diff < 0) diff = 0;
       document.getElementById('countdown').innerHTML = formatTime(diff);
 
-      // NOTE: No sound support in HTML3 era, so no beep or azan audio
+      // Play beep sound 5 minutes (300 sec) before Azan, once
+      if(diff <= 300 && diff > 295 && !beepPlayed) {
+        playSound('beep');
+        beepPlayed = true;
+      }
+
+      // Play Azan sound at time, once
+      if(diff <= 0 && !azanPlayed) {
+        playSound('azan');
+        azanPlayed = true;
+      }
+
+      // Reset flags 5 sec after azan to allow next day sounds
+      if(diff < -5) {
+        beepPlayed = false;
+        azanPlayed = false;
+      }
 
       setTimeout(updateClock, 1000);
+    }
+
+    function playSound(type) {
+      var soundId = (type === 'beep') ? 'beepSound' : 'azanSound';
+      var soundEl = document.getElementById(soundId);
+      if(soundEl) {
+        soundEl.src = soundEl.src; // restart sound hack
+      }
     }
   </script>
 </head>
 <body onload="updateClock()">
-  <h1>Waktu Azan Shah Alam</h1>
-  <div id="clock">--:--:--</div>
-  <div id="nextAzan">Next Azan: Fajr</div>
-  <div id="countdown">--:--:--</div>
-  <p><small>Static Azan Timer • Shah Alam • By ChatGPT</small></p>
+  <div id="container">
+    <img id="logo" src="https://upload.wikimedia.org/wikipedia/en/2/2d/SIRIM_Logo.png" alt="Masjid Logo" />
+    <h1>Waktu Azan Shah Alam</h1>
+    <div id="clock">--:--:--</div>
+    <div id="nextAzan">Next Azan: Fajr</div>
+    <div id="countdown">--:--:--</div>
+
+    <!-- Audio using bgsound (old IE) -->
+    <bgsound id="beepSound" src="beep.wav" loop="false" autostart="false" />
+    <bgsound id="azanSound" src="azan.wav" loop="false" autostart="false" />
+
+    <p style="position:absolute; bottom:30px; width:100%; font-size:16px; color:#fff; text-shadow: 1px 1px 3px #000;">
+      Static Azan Timer • Shah Alam • By ChatGPT
+    </p>
+  </div>
 </body>
 </html>
