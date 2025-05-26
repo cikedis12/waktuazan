@@ -1,65 +1,199 @@
-
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Waktu Azan Shah Alam</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Azan Countdown - Shah Alam</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
+
+  body {
+    background: linear-gradient(135deg, #004aad, #00bfff);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  h1 {
+    font-weight: 600;
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  #clock {
+    font-size: 5rem;
+    font-weight: 300;
+    letter-spacing: 3px;
+    margin-bottom: 2rem;
+    animation: pulse 2s infinite ease-in-out;
+  }
+
+  #nextAzan {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.85;
+  }
+
+  #countdown {
+    font-size: 4rem;
+    font-weight: 600;
+    letter-spacing: 4px;
+    background: rgba(255 255 255 / 0.2);
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(255 255 255 / 0.3);
+    animation: fadeIn 1.5s ease forwards;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+      text-shadow: 0 0 20px #00bfff;
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.05);
+      text-shadow: 0 0 35px #004aad;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  footer {
+    position: fixed;
+    bottom: 10px;
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>Waktu Azan Shah Alam</h1>
-    <div class="clock" id="clock">--:--:--</div>
 
-    <div class="prayer-times">
-      <div class="time-row">Subuh: 05:41 AM</div>
-      <div class="time-row">Zohor: 01:09 PM</div>
-      <div class="time-row">Asar: 04:34 PM</div>
-      <div class="time-row">Maghrib: 07:15 PM</div>
-      <div class="time-row">Isyak: 08:25 PM</div>
-    </div>
-  </div>
+<h1>Waktu Azan Shah Alam</h1>
+<div id="clock">00:00:00</div>
+<div id="nextAzan">Next Azan: Fajr</div>
+<div id="countdown">00:00:00</div>
 
-  <audio id="azanAudio">
-    <source src="azan.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="beepAudio">
-    <source src="beep.mp3" type="audio/mpeg">
-  </audio>
+<audio id="beepSound" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA="></audio>
 
-  <script>
-    function updateClock() {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById("clock").textContent = `${h}:${m}:${s}`;
+<!-- Simple beep sound placeholder -->
 
-      const current = h + ':' + m;
-      const azanTimes = {
-        "05:41": "subuh",
-        "13:09": "zohor",
-        "16:34": "asar",
-        "19:15": "maghrib",
-        "20:25": "isyak"
-      };
-      const beepTimes = {
-        "05:36": "subuh",
-        "13:04": "zohor",
-        "16:29": "asar",
-        "19:10": "maghrib",
-        "20:20": "isyak"
-      };
+<audio id="azanSound" src="https://upload.wikimedia.org/wikipedia/commons/6/6d/Athan_Fajr_Muslim_call_to_prayer.ogg" preload="auto"></audio>
 
-      if (azanTimes[current]) {
-        document.getElementById("azanAudio").play();
-      }
-      if (beepTimes[current]) {
-        document.getElementById("beepAudio").play();
+<script>
+  // Azan times for Shah Alam, Selangor (May 26, 2025) - 24hr format
+  const azanTimes = [
+    {name: 'Fajr', time: '05:53'},
+    {name: 'Dhuhr', time: '13:12'},
+    {name: 'Asr', time: '16:58'},
+    {name: 'Maghrib', time: '19:20'},
+    {name: 'Isha', time: '20:32'},
+  ];
+
+  const clockEl = document.getElementById('clock');
+  const nextAzanEl = document.getElementById('nextAzan');
+  const countdownEl = document.getElementById('countdown');
+  const beepAudio = document.getElementById('beepSound');
+  const azanAudio = document.getElementById('azanSound');
+
+  function parseTimeToDate(hhmm) {
+    const now = new Date();
+    const [h, m] = hhmm.split(':').map(Number);
+    const dt = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
+    return dt;
+  }
+
+  function getNextAzan() {
+    const now = new Date();
+    for(let i=0; i<azanTimes.length; i++) {
+      const azanTime = parseTimeToDate(azanTimes[i].time);
+      if (azanTime > now) {
+        return { ...azanTimes[i], date: azanTime };
       }
     }
-    setInterval(updateClock, 1000);
-  </script>
+    // Next azan is tomorrow's Fajr
+    const firstAzanTomorrow = parseTimeToDate(azanTimes[0].time);
+    firstAzanTomorrow.setDate(firstAzanTomorrow.getDate() + 1);
+    return {...azanTimes[0], date: firstAzanTomorrow};
+  }
+
+  function formatTime(sec) {
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    return [h, m, s].map(x => x.toString().padStart(2, '0')).join(':');
+  }
+
+  function playBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(1000, ctx.currentTime);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.2);
+    } catch (e) {
+      beepAudio.play();
+    }
+  }
+
+  let beepPlayed = false;
+  let azanPlayed = false;
+
+  function update() {
+    const now = new Date();
+    clockEl.textContent = now.toLocaleTimeString('en-GB', {hour12:false});
+
+    const nextAzan = getNextAzan();
+    nextAzanEl.textContent = `Next Azan: ${nextAzan.name} (${nextAzan.time})`;
+
+    const diffMs = nextAzan.date - now;
+    const diffSec = Math.floor(diffMs / 1000);
+
+    if (diffSec >= 0) {
+      countdownEl.textContent = formatTime(diffSec);
+    } else {
+      countdownEl.textContent = '00:00:00';
+    }
+
+    if (diffSec <= 300 && diffSec > 295 && !beepPlayed) {
+      playBeep();
+      beepPlayed = true;
+    }
+
+    if (diffSec <= 0 && !azanPlayed) {
+      azanAudio.play();
+      azanPlayed = true;
+    }
+
+    if (diffSec < -5) {
+      beepPlayed = false;
+      azanPlayed = false;
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  update();
+</script>
+
+<footer>Static Azan Timer • Shah Alam • By ChatGPT</footer>
 </body>
 </html>
