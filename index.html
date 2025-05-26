@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waktu Azan Shah Alam</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Waktu Azan Shah Alam</h1>
+    <div class="clock" id="clock">--:--:--</div>
+
+    <div class="prayer-times">
+      <div class="time-row">Subuh: 05:41 AM</div>
+      <div class="time-row">Zohor: 01:09 PM</div>
+      <div class="time-row">Asar: 04:34 PM</div>
+      <div class="time-row">Maghrib: 07:15 PM</div>
+      <div class="time-row">Isyak: 08:25 PM</div>
+    </div>
+  </div>
+
+  <audio id="azanAudio">
+    <source src="azan.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="beepAudio">
+    <source src="beep.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById("clock").textContent = `${h}:${m}:${s}`;
+
+      const current = h + ':' + m;
+      const azanTimes = {
+        "05:41": "subuh",
+        "13:09": "zohor",
+        "16:34": "asar",
+        "19:15": "maghrib",
+        "20:25": "isyak"
+      };
+      const beepTimes = {
+        "05:36": "subuh",
+        "13:04": "zohor",
+        "16:29": "asar",
+        "19:10": "maghrib",
+        "20:20": "isyak"
+      };
+
+      if (azanTimes[current]) {
+        document.getElementById("azanAudio").play();
+      }
+      if (beepTimes[current]) {
+        document.getElementById("beepAudio").play();
+      }
+    }
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
