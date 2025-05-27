@@ -1,28 +1,32 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <title>Test .au Sound Playback</title>
+  <title>Legacy Sound Test</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
-<body>
-  <h2>Test .au Sound with embed and bgsound</h2>
-  
-  <!-- Play .au with embed -->
-  <embed src="testsound.au" autostart="false" hidden="false" width="100" height="50"></embed>
-  <br>
-  <button onclick="document.getElementById('embedAu').Play()">Play embed .au</button>
 
-  <!-- bgsound for auto play (IE only) -->
-  <bgsound id="bgsoundAu" src="" loop="1" />
+<body bgcolor="#f0f0f0" text="#000000">
 
+  <h1>Legacy HTML Sound Test</h1>
+  <p>This page uses old sound formats (.mid and .au) with HTML 3/4 compatible tags.</p>
+
+  <!-- Background sound using bgsound (IE only) -->
+  <bgsound src="bgmusic.mid" loop="infinite" />
+
+  <!-- Manual play with EMBED -->
+  <h2>Manual Play</h2>
+
+  <button onclick="document.getElementById('midSound').src='bgmusic.mid';">▶️ Play MIDI</button>
   <br><br>
-  <button onclick="document.getElementById('bgsoundAu').src='testsound.au';">Play bgsound .au</button>
+  <button onclick="document.getElementById('auSound').src='sound.au';">🔊 Play AU</button>
 
-  <script>
-    // Try to play embed by setting autostart programmatically if supported
-    var embedEl = document.getElementsByTagName('embed')[0];
-    embedEl.id = 'embedAu';
-  </script>
-  
-  <p>Use buttons to test playback of .au sound.</p>
+  <br><br><br>
+
+  <!-- Hidden EMBED elements for sound playback -->
+  <embed id="midSound" src="" hidden="true" autostart="false" loop="false" />
+  <embed id="auSound" src="" hidden="true" autostart="false" loop="false" />
+
+  <p>Put <code>bgmusic.mid</code> and <code>sound.au</code> in the same folder as this HTML file.</p>
+
 </body>
 </html>
