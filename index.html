@@ -9,30 +9,20 @@
       padding: 0;
       width: 1080px;
       height: 1920px;
+      background: linear-gradient(to bottom, #021b79, #0575e6);
+      color: #ffffff;
       font-family: Arial, Helvetica, sans-serif;
       text-align: center;
-      background: url('https://marketplace.canva.com/EAGAoBCHzAg/1/0/900w/canva-blue-white-islamic-elegant-background-instagram-story-RL-SReco5HE.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: #ffffff;
-      position: relative;
-    }
-    body:before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 1080px;
-      height: 1920px;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 0;
     }
     #container {
-      position: relative;
-      z-index: 1;
       padding-top: 30px;
     }
     #logo {
-      width: 180px;
+      width: 200px;
+      height: auto;
+      border-radius: 100px;
+      border: 5px solid #ffffff;
+      background-color: #021b79;
       animation: pulse 4s infinite;
     }
     h1 {
@@ -41,8 +31,8 @@
       text-shadow: 2px 2px #000;
     }
     #clock {
-      font-size: 110px;
-      margin: 20px 0;
+      font-size: 120px;
+      margin: 40px 0;
     }
     #nextAzan {
       font-size: 36px;
@@ -64,57 +54,103 @@
       margin-top: 20px;
       display: none;
     }
-    #azanTable {
-      width: 90%;
-      margin: 30px auto;
-      border-collapse: separate;
-      border-spacing: 0;
-      font-size: 32px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    #azanList {
+      margin: 40px auto;
+      width: 800px;
+      text-align: center;
     }
-    #azanTable td {
-      padding: 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    .azanGrid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
     }
-    #azanTable tr:last-child td {
-      border-bottom: none;
-    }
-    #azanTable .highlight {
-      background-color: rgba(76, 175, 80, 0.7);
+    .azanBox {
+      width: 48%;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 28px;
       color: #fff;
-      font-weight: bold;
     }
-    .azanIcon {
+    .subuhBox {
+      border: 5px solid #00eaff;
+      background-color: rgba(0, 234, 255, 0.1);
+    }
+    .zohorBox {
+      border: 5px solid #ffe600;
+      background-color: rgba(255, 230, 0, 0.1);
+    }
+    .asarBox {
+      border: 5px solid #ff9800;
+      background-color: rgba(255, 152, 0, 0.1);
+    }
+    .maghribBox {
+      border: 5px solid #f44336;
+      background-color: rgba(244, 67, 54, 0.1);
+    }
+    .isyakBox {
+      border: 5px solid #9c27b0;
+      background-color: rgba(156, 39, 176, 0.1);
+    }
+    .azanBox img {
       width: 40px;
-      vertical-align: middle;
-      margin-right: 10px;
+      height: 40px;
+      margin-right: 15px;
+    }
+    .azanBox .name {
+      flex: 1;
+      text-align: center;
+    }
+    .azanBox .time {
+      text-align: right;
+    }
+    .azanBox.highlight {
+      box-shadow: 0 0 20px #ffc107;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    #donate {
+      margin-top: 50px;
+      font-size: 24px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-radius: 15px;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
     }
     @keyframes pulse {
       0% { opacity: 1; }
       50% { opacity: 0.7; }
       100% { opacity: 1; }
     }
-    #footer {
-      margin-top: 60px;
-      font-size: 20px;
-      color: #ccc;
-    }
   </style>
-
   <script type="text/javascript">
     var azanTimes = [
-      { name: 'Subuh', time: '05:53', icon: 'icons/subuh.png' },
-      { name: 'Zohor', time: '13:12', icon: 'icons/zohor.png' },
-      { name: 'Asar',  time: '16:58', icon: 'icons/asar.png' },
-      { name: 'Maghrib', time: '19:20', icon: 'icons/maghrib.png' },
-      { name: 'Isyak', time: '20:32', icon: 'icons/isyak.png' }
+      { name: 'Subuh', time: '05:53' },
+      { name: 'Zohor', time: '13:12' },
+      { name: 'Asar', time: '16:58' },
+      { name: 'Maghrib', time: '19:20' },
+      { name: 'Isyak', time: '20:32' }
     ];
+
+    var iconPaths = {
+      Subuh: "icons/subuh.png",
+      Zohor: "icons/zohor.png",
+      Asar: "icons/asar.png",
+      Maghrib: "icons/maghrib.png",
+      Isyak: "icons/isyak.png"
+    };
 
     var beepPlayed = false;
     var azanPlayed = false;
+
+    function pad(n) {
+      return (n < 10 ? '0' : '') + n;
+    }
 
     function parseTime(hhmm) {
       var now = new Date();
@@ -127,16 +163,12 @@
       for (var i = 0; i < azanTimes.length; i++) {
         var azan = parseTime(azanTimes[i].time);
         if (azan > now) {
-          return { index: i, ...azanTimes[i], date: azan };
+          return { index: i, name: azanTimes[i].name, time: azanTimes[i].time, date: azan };
         }
       }
       var tomorrow = parseTime(azanTimes[0].time);
       tomorrow.setDate(tomorrow.getDate() + 1);
-      return { index: 0, ...azanTimes[0], date: tomorrow };
-    }
-
-    function pad(n) {
-      return (n < 10 ? '0' : '') + n;
+      return { index: 0, name: azanTimes[0].name, time: azanTimes[0].time, date: tomorrow };
     }
 
     function formatTime(sec) {
@@ -178,44 +210,71 @@
         azanPlayed = false;
       }
 
-      renderAzanList(nextAzan.index);
-
+      highlightNextAzan(nextAzan.index);
       setTimeout(updateDisplay, 1000);
     }
 
-    function renderAzanList(highlightIndex) {
-      var html = '';
+    function showAzanList() {
+      var grid = document.createElement("div");
+      grid.className = "azanGrid";
       for (var i = 0; i < azanTimes.length; i++) {
-        html += '<tr' + (i === highlightIndex ? ' class="highlight"' : '') + '>';
-        html += '<td><img class="azanIcon" src="' + azanTimes[i].icon + '" alt="' + azanTimes[i].name + ' Icon" /></td>';
-        html += '<td>' + azanTimes[i].name + '</td>';
-        html += '<td>' + azanTimes[i].time + '</td>';
-        html += '</tr>';
+        var nameKey = azanTimes[i].name.toLowerCase();
+        var box = document.createElement("div");
+        box.className = "azanBox " + nameKey + "Box";
+        box.id = "azanRow" + i;
+
+        var icon = document.createElement("img");
+        icon.src = iconPaths[azanTimes[i].name];
+        icon.alt = azanTimes[i].name;
+
+        var name = document.createElement("div");
+        name.className = "name";
+        name.innerHTML = azanTimes[i].name;
+
+        var time = document.createElement("div");
+        time.className = "time";
+        time.innerHTML = azanTimes[i].time;
+
+        box.appendChild(icon);
+        box.appendChild(name);
+        box.appendChild(time);
+        grid.appendChild(box);
       }
-      document.getElementById("azanTableBody").innerHTML = html;
+      document.getElementById("azanList").appendChild(grid);
+    }
+
+    function highlightNextAzan(index) {
+      for (var i = 0; i < azanTimes.length; i++) {
+        var row = document.getElementById("azanRow" + i);
+        if (row) {
+          var nameKey = azanTimes[i].name.toLowerCase();
+          row.className = "azanBox " + nameKey + "Box";
+          if (i === index) {
+            row.className += " highlight";
+          }
+        }
+      }
     }
   </script>
 </head>
 
-<body onload="updateDisplay()">
+<body onload="updateDisplay();showAzanList();">
   <div id="container">
     <img id="logo" src="https://static.vecteezy.com/system/resources/previews/045/705/064/non_2x/islamic-mosque-design-illustration-masjid-black-color-icon-vector.jpg" alt="Masjid Icon">
     <h1>Waktu Azan Shah Alam</h1>
     <div id="clock">--:--:--</div>
     <div id="nextAzan">Next Azan: -- (--:--)</div>
     <div id="countdown">--:--:--</div>
-    <div id="reminder">5 min before Azan - Sila bersedia untuk solat.</div>
+    <div id="reminder">⏰ 5 min before Azan - Sila bersedia untuk solat.</div>
 
-    <table id="azanTable">
-      <tbody id="azanTableBody"></tbody>
-    </table>
+    <div id="azanList"></div>
+
+    <div id="donate">❤️ Sumbangan ikhlas anda dialu-alukan untuk operasi Surau SIRIM. Terima kasih atas sokongan anda.</div>
 
     <embed id="beepSound" src="" hidden="true" autostart="false" loop="false" />
     <embed id="azanSound" src="" hidden="true" autostart="false" loop="false" />
 
-    <div id="footer">
-      ❤️ Sumbangan amat dialu-alukan | Tabung Dana Surau SIRIM
-    </div>
+    <p style="margin-top: 40px; font-size: 16px; color: #eee;">Surau SIRIM | HTML 4.01 Azan Display</p>
   </div>
 </body>
 </html>
