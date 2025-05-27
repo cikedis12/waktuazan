@@ -172,7 +172,7 @@
       if (diff <= 300 && diff > 0) {
         showPopupReminder(true);
         if (!beepPlayed) {
-          document.getElementById("beepSound").src = "beep.wav";
+          document.getElementById("beepSound").src = "beep.mp3";
           beepPlayed = true;
         }
       } else {
@@ -180,7 +180,7 @@
       }
 
       if (diff <= 0 && !azanPlayed) {
-        document.getElementById("azanSound").src = "azan.wav";
+        document.getElementById("azanSound").src = "azan.mp3";
         azanPlayed = true;
       }
 
@@ -233,10 +233,10 @@
       }
     }
     function playAzanManual() {
-      document.getElementById("manualAzan").src = "azan.wav";
+      document.getElementById("manualAzan").src = "azan.mp3";
     }
     function playBeepManual() {
-      document.getElementById("manualBeep").src = "beep.wav";
+      document.getElementById("manualBeep").src = "beep.mp3";
     }
   </script>
 </head>
