@@ -193,7 +193,7 @@
       if (diff <= 300 && diff > 0) {
         reminder.style.display = "block";
         if (!beepPlayed) {
-          document.getElementById("beepSound").src = "beep.wav";
+          document.getElementById("beepSound").play();
           beepPlayed = true;
         }
       } else {
@@ -201,7 +201,7 @@
       }
 
       if (diff <= 0 && !azanPlayed) {
-        document.getElementById("azanSound").src = "azan.wav";
+        document.getElementById("azanSound").play();
         azanPlayed = true;
       }
 
@@ -271,8 +271,8 @@
 
     <div id="donate">❤️ Sumbangan ikhlas anda dialu-alukan untuk operasi Surau SIRIM. Terima kasih atas sokongan anda.</div>
 
-    <embed id="beepSound" src="" hidden="true" autostart="false" loop="false" />
-    <embed id="azanSound" src="" hidden="true" autostart="false" loop="false" />
+    <audio id="beepSound" src="beep.wav" preload="auto" hidden></audio>
+    <audio id="azanSound" src="azan.wav" preload="auto" hidden></audio>
 
     <p style="margin-top: 40px; font-size: 16px; color: #eee;">Surau SIRIM | HTML 4.01 Azan Display</p>
   </div>
