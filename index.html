@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <title>Waktu Azan Shah Alam</title>
+  <title>Waktu Azan CoinLabit</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <style type="text/css">
     body {
@@ -23,7 +23,6 @@
       border-radius: 100px;
       border: 5px solid #ffffff;
       background-color: #021b79;
-      animation: pulse 4s infinite;
     }
     h1 {
       font-size: 50px;
@@ -69,38 +68,18 @@
       font-size: 28px;
       color: #fff;
     }
-    .subuhBox {
-      border: 5px solid #00eaff;
-      background-color: rgba(0, 234, 255, 0.1);
-    }
-    .zohorBox {
-      border: 5px solid #ffe600;
-      background-color: rgba(255, 230, 0, 0.1);
-    }
-    .asarBox {
-      border: 5px solid #ff9800;
-      background-color: rgba(255, 152, 0, 0.1);
-    }
-    .maghribBox {
-      border: 5px solid #f44336;
-      background-color: rgba(244, 67, 54, 0.1);
-    }
-    .isyakBox {
-      border: 5px solid #9c27b0;
-      background-color: rgba(156, 39, 176, 0.1);
-    }
+    .subuhBox { border: 5px solid #00eaff; background-color: rgba(0, 234, 255, 0.1); }
+    .zohorBox { border: 5px solid #ffe600; background-color: rgba(255, 230, 0, 0.1); }
+    .asarBox { border: 5px solid #ff9800; background-color: rgba(255, 152, 0, 0.1); }
+    .maghribBox { border: 5px solid #f44336; background-color: rgba(244, 67, 54, 0.1); }
+    .isyakBox { border: 5px solid #9c27b0; background-color: rgba(156, 39, 176, 0.1); }
     .azanBox img {
       width: 40px;
       height: 40px;
       margin-right: 15px;
     }
-    .azanBox .name {
-      flex: 1;
-      text-align: center;
-    }
-    .azanBox .time {
-      text-align: right;
-    }
+    .azanBox .name { flex: 1; text-align: center; }
+    .azanBox .time { text-align: right; }
     .azanBox.highlight {
       box-shadow: 0 0 20px #ffc107;
       background-color: rgba(255, 255, 255, 0.2);
@@ -116,21 +95,29 @@
       margin-left: auto;
       margin-right: auto;
     }
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.7; }
-      100% { opacity: 1; }
+    #popupReminder {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #ffc107;
+      color: #000;
+      padding: 20px 30px;
+      font-size: 28px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px #000;
+      z-index: 9999;
     }
   </style>
   <script type="text/javascript">
     var azanTimes = [
-      { name: 'Subuh', time: '05:51' },
+      { name: 'Subuh', time: '05:53' },
       { name: 'Zohor', time: '13:12' },
-      { name: 'Asar', time: '16:37' },
-      { name: 'Maghrib', time: '19:21' },
-      { name: 'Isyak', time: '20:35' }
+      { name: 'Asar', time: '16:58' },
+      { name: 'Maghrib', time: '19:20' },
+      { name: 'Isyak', time: '20:32' }
     ];
-
     var iconPaths = {
       Subuh: "icons/subuh.png",
       Zohor: "icons/zohor.png",
@@ -138,20 +125,17 @@
       Maghrib: "icons/maghrib.png",
       Isyak: "icons/isyak.png"
     };
-
     var beepPlayed = false;
     var azanPlayed = false;
 
     function pad(n) {
       return (n < 10 ? '0' : '') + n;
     }
-
     function parseTime(hhmm) {
       var now = new Date();
       var parts = hhmm.split(':');
       return new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(parts[0], 10), parseInt(parts[1], 10), 0);
     }
-
     function getNextAzan() {
       var now = new Date();
       for (var i = 0; i < azanTimes.length; i++) {
@@ -164,14 +148,16 @@
       tomorrow.setDate(tomorrow.getDate() + 1);
       return { index: 0, name: azanTimes[0].name, time: azanTimes[0].time, date: tomorrow };
     }
-
     function formatTime(sec) {
       var h = Math.floor(sec / 3600);
       var m = Math.floor((sec % 3600) / 60);
       var s = sec % 60;
       return pad(h) + ':' + pad(m) + ':' + pad(s);
     }
-
+    function showPopupReminder(show) {
+      var popup = document.getElementById("popupReminder");
+      popup.style.display = show ? "block" : "none";
+    }
     function updateDisplay() {
       var now = new Date();
       document.getElementById("clock").innerHTML = pad(now.getHours()) + ":" + pad(now.getMinutes()) + ":" + pad(now.getSeconds());
@@ -184,17 +170,17 @@
       document.getElementById("countdown").innerHTML = formatTime(diff);
 
       if (diff <= 300 && diff > 0) {
+        showPopupReminder(true);
         if (!beepPlayed) {
-          alert("⏰ 5 min before Azan - Sila bersedia untuk solat.");
           document.getElementById("beepSound").src = "beep.wav";
-          document.getElementById("bgsoundBeep").innerHTML = '<bgsound src="beep.wav" loop="1">';
           beepPlayed = true;
         }
+      } else {
+        showPopupReminder(false);
       }
 
       if (diff <= 0 && !azanPlayed) {
         document.getElementById("azanSound").src = "azan.wav";
-        document.getElementById("bgsoundAzan").innerHTML = '<bgsound src="azan.wav" loop="1">';
         azanPlayed = true;
       }
 
@@ -206,7 +192,6 @@
       highlightNextAzan(nextAzan.index);
       setTimeout(updateDisplay, 1000);
     }
-
     function showAzanList() {
       var grid = document.createElement("div");
       grid.className = "azanGrid";
@@ -235,7 +220,6 @@
       }
       document.getElementById("azanList").appendChild(grid);
     }
-
     function highlightNextAzan(index) {
       for (var i = 0; i < azanTimes.length; i++) {
         var row = document.getElementById("azanRow" + i);
@@ -248,6 +232,12 @@
         }
       }
     }
+    function playAzanManual() {
+      document.getElementById("manualAzan").src = "azan.wav";
+    }
+    function playBeepManual() {
+      document.getElementById("manualBeep").src = "beep.wav";
+    }
   </script>
 </head>
 
@@ -258,17 +248,25 @@
     <div id="clock">--:--:--</div>
     <div id="nextAzan">Next Azan: -- (--:--)</div>
     <div id="countdown">--:--:--</div>
-
     <div id="azanList"></div>
+
+    <div style="margin-top: 30px;">
+      <button onclick="playAzanManual()" style="font-size: 32px; padding: 10px 20px;">▶️ Play Azan</button>
+      <button onclick="playBeepManual()" style="font-size: 32px; padding: 10px 20px;">🔔 Play Beep</button>
+    </div>
 
     <div id="donate">❤️ Sumbangan ikhlas anda dialu-alukan untuk operasi Surau SIRIM. Terima kasih atas sokongan anda.</div>
 
-    <embed id="beepSound" src="" hidden="true" autostart="false" />
-    <embed id="azanSound" src="" hidden="true" autostart="false" />
-    <div id="bgsoundBeep"></div>
-    <div id="bgsoundAzan"></div>
+    <!-- Popup Reminder -->
+    <div id="popupReminder">⏰ 5 min before Azan - Sila bersedia untuk solat.</div>
 
-    <p style="margin-top: 40px; font-size: 16px; color: #eee;">Surau SIRIM | HTML 4.01 Azan Display</p>
+    <!-- Embed Audio -->
+    <embed id="beepSound" src="" hidden="true" autostart="false" loop="false" />
+    <embed id="azanSound" src="" hidden="true" autostart="false" loop="false" />
+    <embed id="manualAzan" src="" hidden="true" autostart="false" loop="false" />
+    <embed id="manualBeep" src="" hidden="true" autostart="false" loop="false" />
+
+    <p style="margin-top: 40px; font-size: 16px; color: #eee;">Surau COINLABIT | HTML 4.01 Azan Display</p>
   </div>
 </body>
 </html>
