@@ -1,23 +1,28 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 <head>
-  <title>HTML3 Sound Test with Play Button</title>
-  <script type="text/javascript">
-    function playSound() {
-      var soundEmbed = document.getElementById('soundEmbed');
-      soundEmbed.src = "test.wav";
-    }
-  </script>
+  <title>Test .au Sound Playback</title>
 </head>
 <body>
+  <h2>Test .au Sound with embed and bgsound</h2>
+  
+  <!-- Play .au with embed -->
+  <embed src="testsound.au" autostart="false" hidden="false" width="100" height="50"></embed>
+  <br>
+  <button onclick="document.getElementById('embedAu').Play()">Play embed .au</button>
 
-<h1>HTML 3 Sound Test with Play Button</h1>
-<p>Click the button to play sound.</p>
+  <!-- bgsound for auto play (IE only) -->
+  <bgsound id="bgsoundAu" src="" loop="1" />
 
-<button onclick="playSound()">▶️ Play Sound</button>
+  <br><br>
+  <button onclick="document.getElementById('bgsoundAu').src='testsound.au';">Play bgsound .au</button>
 
-<!-- Embed tag, initially no src -->
-<embed id="soundEmbed" src="" autostart="false" hidden="true">
-
+  <script>
+    // Try to play embed by setting autostart programmatically if supported
+    var embedEl = document.getElementsByTagName('embed')[0];
+    embedEl.id = 'embedAu';
+  </script>
+  
+  <p>Use buttons to test playback of .au sound.</p>
 </body>
 </html>
