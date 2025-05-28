@@ -30,8 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const year = date.getFullYear();
         const month = date.getMonth() + 1; // Month is 0-indexed
 
-        // Using Aladhan API for example. Replace with your preferred API.
-        // You might need an API key for some services.
         const apiUrl = `https://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${latitude}&longitude=${longitude}&method=${method}`;
 
         try {
@@ -61,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 ishaTimeElement.textContent = azanTimesToday.isha;
             } else {
                 console.error("Could not find today's azan times.");
-                // Set default/placeholder times if API fails or no data
                 fajrTimeElement.textContent = '--:--';
                 dhuhrTimeElement.textContent = '--:--';
                 asrTimeElement.textContent = '--:--';
@@ -71,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error fetching Azan times:', error);
             alert('Failed to fetch Azan times. Please check your internet connection or API settings.');
-            // Set default/placeholder times on error
             fajrTimeElement.textContent = '--:--';
             dhuhrTimeElement.textContent = '--:--';
             asrTimeElement.textContent = '--:--';
@@ -106,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Reminder 5 minutes before
                 const reminderMinutes = totalAzanMinutes - 5;
                 if (totalCurrentMinutes === reminderMinutes) {
-                    // Prevent multiple reminders in the same minute
                     if (!sessionStorage.getItem(`reminder-${prayer}-${currentHours}:${currentMinutes}`)) {
                         alert(`Reminder: ${prayer} Azan in 5 minutes!`);
                         console.log(`Reminder for ${prayer} at ${currentHours}:${currentMinutes}`);
@@ -116,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Play Azan at actual time
                 if (totalCurrentMinutes === totalAzanMinutes) {
-                    // Prevent multiple plays in the same minute
                     if (!sessionStorage.getItem(`played-${prayer}-${currentHours}:${currentMinutes}`)) {
                         playAzanSound();
                         console.log(`Playing Azan for ${prayer} at ${currentHours}:${currentMinutes}`);
@@ -131,25 +125,22 @@ document.addEventListener('DOMContentLoaded', () => {
     playAzanBtn.addEventListener('click', playAzanSound);
 
     // --- Initial calls and intervals ---
-    updateCurrentTime(); // Call once immediately
-    setInterval(updateCurrentTime, 1000); // Update every second
+    updateCurrentTime();
+    setInterval(updateCurrentTime, 1000);
 
-    fetchAzanTimes(); // Fetch azan times on load
-    // Check azan and reminders every minute
-    setInterval(checkAzanAndReminders, 60 * 1000); // Every minute
+    fetchAzanTimes();
+    setInterval(checkAzanAndReminders, 60 * 1000);
 
-    // Optional: Refresh Azan times daily (e.g., at midnight)
     function setDailyAzanFetch() {
         const now = new Date();
-        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5); // 5 seconds past midnight
+        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
         const timeToWait = tomorrow.getTime() - now.getTime();
 
         setTimeout(() => {
             fetchAzanTimes();
-            // Clear session storage for the new day's reminders/plays
             sessionStorage.clear();
-            setDailyAzanFetch(); // Set timeout for the next day
+            setDailyAzanFetch();
         }, timeToWait);
     }
-    setDailyAzanFetch(); // Start the daily fetch cycle
+    setDailyAzanFetch();
 });
