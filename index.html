@@ -1,22 +1,61 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Audio Test (HTML3)</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azan Reminder - Shah Alam</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-&nbsp;
-&nbsp;
+    <div class="container">
+        <header>
+            <h1>Azan Reminder</h1>
+            <p class="location"><i class="fas fa-map-marker-alt"></i> Shah Alam, Selangor</p>
+            <div class="clock-widget">
+                <i class="far fa-clock"></i> <span id="current-time"></span>
+            </div>
+        </header>
 
-<h2>Audio Test - HTML3 Compatible</h2>
-&nbsp;
-&nbsp;
+        <main>
+            <section class="azan-times">
+                <h2>Next Azan Times</h2>
+                <div class="azan-list">
+                    <div class="azan-item">
+                        <span class="azan-name">Fajr</span>
+                        <span class="azan-time" id="fajr-time">--:--</span>
+                    </div>
+                    <div class="azan-item">
+                        <span class="azan-name">Dhuhr</span>
+                        <span class="azan-time" id="dhuhr-time">--:--</span>
+                    </div>
+                    <div class="azan-item">
+                        <span class="azan-name">Asr</span>
+                        <span class="azan-time" id="asr-time">--:--</span>
+                    </div>
+                    <div class="azan-item">
+                        <span class="azan-name">Maghrib</span>
+                        <span class="azan-time" id="maghrib-time">--:--</span>
+                    </div>
+                    <div class="azan-item">
+                        <span class="azan-name">Isha</span>
+                        <span class="azan-time" id="isha-time">--:--</span>
+                    </div>
+                </div>
+            </section>
 
-<p>
-  <!-- Link to play.html where the sound file is embedded -->
-  <a href="play.html">Play Sound</a>
-</p>
-&nbsp;
-&nbsp;
+            <section class="controls">
+                <button id="playAzanBtn"><i class="fas fa-volume-up"></i> Play Azan</button>
+            </section>
+        </main>
 
+        <footer>
+            <p>&copy; 2025 Azan Reminder. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <audio id="azanSound" src="azan.mp3" preload="auto"></audio>
+
+    <script src="script.js"></script>
 </body>
 </html>
