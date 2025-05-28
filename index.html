@@ -1,24 +1,24 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Azan Reminder - Shah Alam</title>
-    <link rel="stylesheet" href="style.css" type="text/css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" type="text/css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azan Reminder - Shah Alam (IE Compatible)</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <header>
             <h1>Azan Reminder</h1>
             <p class="location"><i class="fas fa-map-marker-alt"></i> Shah Alam, Selangor</p>
             <div class="clock-widget">
                 <i class="far fa-clock"></i> <span id="current-time"></span>
             </div>
-        </div>
+        </header>
 
-        <div class="main-content">
-            <div class="azan-times">
+        <main>
+            <section class="azan-times">
                 <h2>Next Azan Times</h2>
                 <div class="azan-list">
                     <div class="azan-item">
@@ -42,20 +42,20 @@
                         <span class="azan-time" id="isha-time">--:--</span>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="controls">
+            <section class="controls">
                 <button id="playAzanBtn"><i class="fas fa-volume-up"></i> Play Azan</button>
-            </div>
-        </div>
+            </section>
+        </main>
 
-        <div class="footer">
+        <footer>
             <p>&copy; 2025 Azan Reminder. All rights reserved.</p>
-        </div>
+        </footer>
     </div>
 
     <audio id="azanSound" src="azan.mp3" preload="auto"></audio>
 
-    <script type="text/javascript" src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
