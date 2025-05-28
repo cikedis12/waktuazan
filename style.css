@@ -1,27 +1,28 @@
-/* No changes needed here for HTML4 compatibility, as CSS is mostly separate.
-   The media queries (CSS3) will still function in modern browsers. */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-:root {
-    --primary-color: #4CAF50; /* Green */
-    --secondary-color: #66BB6A; /* Lighter Green */
-    --background-color: #f0f2f5;
-    --card-background: #ffffff;
-    --text-color: #333;
-    --light-text-color: #777;
-    --border-color: #e0e0e0;
-}
+/* No CSS Variables for IE compatibility */
+/* Hardcoded colors from previous :root definitions */
+/* --primary-color: #4CAF50; */
+/* --secondary-color: #66BB6A; */
+/* --background-color: #f0f2f5; */
+/* --card-background: #ffffff; */
+/* --text-color: #333; */
+/* --light-text-color: #777; */
+/* --border-color: #e0e0e0; */
 
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif; /* @import url should be at top of CSS file */
     margin: 0;
     padding: 0;
+    /* Flexbox with IE prefixes */
+    display: -ms-flexbox; /* IE 10/11 */
     display: flex;
+    -ms-flex-pack: center; /* IE 10/11 justify-content: center */
     justify-content: center;
+    -ms-flex-align: center; /* IE 10/11 align-items: center */
     align-items: center;
     min-height: 100vh;
-    background-color: var(--background-color);
-    color: var(--text-color);
+    background-color: #f0f2f5;
+    color: #333;
+    -ms-box-sizing: border-box; /* IE 8/9/10/11 */
     box-sizing: border-box;
     width: 100vw;
     height: 100vh;
@@ -29,50 +30,61 @@ body {
 }
 
 .container {
-    background-color: var(--card-background);
+    background-color: #ffffff;
+    -ms-border-radius: 15px; /* IE 9/10/11 */
     border-radius: 15px;
+    -ms-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* IE 9/10/11 */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     padding: 30px;
     width: 90%;
     max-width: 500px;
     text-align: center;
+    /* Flexbox with IE prefixes */
+    display: -ms-flexbox; /* IE 10/11 */
     display: flex;
+    -ms-flex-direction: column; /* IE 10/11 flex-direction: column */
     flex-direction: column;
     min-height: 80vh;
+    -ms-flex-pack: justify; /* IE 10/11 justify-content: space-between */
     justify-content: space-between;
 }
 
-.header { /* Renamed from header */
+header {
     margin-bottom: 30px;
 }
 
-.header h1 {
-    color: var(--primary-color);
+header h1 {
+    color: #4CAF50;
     margin-bottom: 10px;
     font-size: 2.2em;
 }
 
 .location {
     font-size: 1.1em;
-    color: var(--light-text-color);
+    color: #777;
     margin-bottom: 20px;
 }
 
 .location i {
     margin-right: 8px;
-    color: var(--primary-color);
+    color: #4CAF50;
 }
 
 .clock-widget {
-    background-color: var(--secondary-color);
+    background-color: #66BB6A;
     color: white;
     padding: 12px 20px;
+    -ms-border-radius: 10px; /* IE 9/10/11 */
     border-radius: 10px;
+    /* Flexbox with IE prefixes */
+    display: -ms-inline-flexbox; /* IE 10/11 */
     display: inline-flex;
+    -ms-flex-align: center; /* IE 10/11 align-items: center */
     align-items: center;
     font-size: 1.5em;
     font-weight: 600;
     margin-top: 15px;
+    -ms-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* IE 9/10/11 */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -82,82 +94,107 @@ body {
 
 .azan-times {
     margin-bottom: 30px;
+    -ms-flex-positive: 1; /* IE 10/11 flex-grow: 1 */
     flex-grow: 1;
 }
 
 .azan-times h2 {
-    color: var(--primary-color);
+    color: #4CAF50;
     margin-bottom: 20px;
     font-size: 1.8em;
 }
 
 .azan-list {
+    /* Flexbox with IE prefixes */
+    display: -ms-flexbox; /* IE 10/11 */
     display: flex;
+    -ms-flex-direction: column; /* IE 10/11 flex-direction: column */
     flex-direction: column;
-    gap: 15px;
+    /* No 'gap' property in IE; use margin-bottom on items instead or negative margin on container */
+    /* For simplicity, we'll use margin-bottom on azan-item */
 }
 
 .azan-item {
+    /* Flexbox with IE prefixes */
+    display: -ms-flexbox; /* IE 10/11 */
     display: flex;
+    -ms-flex-pack: justify; /* IE 10/11 justify-content: space-between */
     justify-content: space-between;
+    -ms-flex-align: center; /* IE 10/11 align-items: center */
     align-items: center;
-    background-color: var(--background-color);
+    background-color: #f0f2f5;
     padding: 15px 20px;
+    -ms-border-radius: 8px; /* IE 9/10/11 */
     border-radius: 8px;
-    border: 1px solid var(--border-color);
+    border: 1px solid #e0e0e0;
+    -ms-transition: transform 0.2s ease-in-out; /* IE 10/11 */
     transition: transform 0.2s ease-in-out;
+    margin-bottom: 15px; /* Replaces gap */
+}
+/* Remove margin-bottom from last item in azan-list */
+.azan-list .azan-item:last-child {
+    margin-bottom: 0;
 }
 
+
 .azan-item:hover {
+    -ms-transform: translateY(-3px); /* IE 9/10/11 */
     transform: translateY(-3px);
 }
 
 .azan-name {
     font-weight: 600;
     font-size: 1.1em;
-    color: var(--text-color);
+    color: #333;
 }
 
 .azan-time {
     font-weight: 600;
     font-size: 1.2em;
-    color: var(--primary-color);
+    color: #4CAF50;
 }
 
-.controls { /* Renamed from controls */
+.controls {
     margin-top: 30px;
 }
 
 #playAzanBtn {
-    background-color: var(--primary-color);
+    background-color: #4CAF50;
     color: white;
     border: none;
     padding: 15px 25px;
+    -ms-border-radius: 10px; /* IE 9/10/11 */
     border-radius: 10px;
     font-size: 1.2em;
     cursor: pointer;
+    -ms-transition: background-color 0.3s ease, transform 0.2s ease; /* IE 10/11 */
     transition: background-color 0.3s ease, transform 0.2s ease;
+    /* Flexbox with IE prefixes */
+    display: -ms-inline-flexbox; /* IE 10/11 */
     display: inline-flex;
+    -ms-flex-align: center; /* IE 10/11 align-items: center */
     align-items: center;
-    gap: 10px;
+    /* No 'gap' property in IE */
+}
+
+#playAzanBtn i {
+    margin-right: 10px; /* Manual spacing instead of gap */
+    font-size: 1.3em;
 }
 
 #playAzanBtn:hover {
     background-color: #43A047;
+    -ms-transform: translateY(-2px); /* IE 9/10/11 */
     transform: translateY(-2px);
 }
 
-#playAzanBtn i {
-    font-size: 1.3em;
-}
-
-.footer { /* Renamed from footer */
+footer {
     margin-top: 30px;
     font-size: 0.9em;
-    color: var(--light-text-color);
+    color: #777;
 }
 
-/* Responsive adjustments for 1080x1920 (portrait) */
+/* Media queries are generally supported in IE9+ */
 @media (max-width: 1080px) and (max-height: 1920px) {
     body {
         padding: 20px;
@@ -168,7 +205,7 @@ body {
         padding: 25px;
     }
 
-    .header h1 {
+    header h1 {
         font-size: 2em;
     }
 
@@ -195,14 +232,14 @@ body {
     }
 }
 
-/* General smaller screen adjustments (e.g., phones in landscape or smaller tablets) */
 @media (max-width: 768px) {
     .container {
         padding: 20px;
+        -ms-border-radius: 10px; /* IE 9/10/11 */
         border-radius: 10px;
     }
 
-    .header h1 {
+    header h1 {
         font-size: 1.8em;
     }
 
