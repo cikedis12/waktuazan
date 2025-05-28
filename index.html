@@ -1,24 +1,24 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Azan Reminder - Shah Alam</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" type="text/css">
 </head>
 <body>
     <div class="container">
-        <header>
+        <div class="header">
             <h1>Azan Reminder</h1>
             <p class="location"><i class="fas fa-map-marker-alt"></i> Shah Alam, Selangor</p>
             <div class="clock-widget">
                 <i class="far fa-clock"></i> <span id="current-time"></span>
             </div>
-        </header>
+        </div>
 
-        <main>
-            <section class="azan-times">
+        <div class="main-content">
+            <div class="azan-times">
                 <h2>Next Azan Times</h2>
                 <div class="azan-list">
                     <div class="azan-item">
@@ -42,20 +42,20 @@
                         <span class="azan-time" id="isha-time">--:--</span>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section class="controls">
+            <div class="controls">
                 <button id="playAzanBtn"><i class="fas fa-volume-up"></i> Play Azan</button>
-            </section>
-        </main>
+            </div>
+        </div>
 
-        <footer>
+        <div class="footer">
             <p>&copy; 2025 Azan Reminder. All rights reserved.</p>
-        </footer>
+        </div>
     </div>
 
     <audio id="azanSound" src="azan.mp3" preload="auto"></audio>
 
-    <script src="script.js"></script>
+    <script type="text/javascript" src="script.js"></script>
 </body>
 </html>
