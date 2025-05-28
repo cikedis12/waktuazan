@@ -3,88 +3,15 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Audio Test - Dahua DPB18-AI</title>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #121212;
-    color: #eee;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
-  }
-  h1 {
-    margin-bottom: 1rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  button {
-    background: linear-gradient(135deg, #4a90e2, #50e3c2);
-    border: none;
-    border-radius: 40px;
-    padding: 15px 30px;
-    font-size: 1.25rem;
-    color: #121212;
-    cursor: pointer;
-    box-shadow: 0 6px 12px rgba(80, 227, 194, 0.6);
-    transition: background 0.3s ease, transform 0.2s ease;
-    user-select: none;
-  }
-  button:hover {
-    background: linear-gradient(135deg, #50e3c2, #4a90e2);
-    transform: scale(1.05);
-  }
-  button:active {
-    transform: scale(0.95);
-  }
-  .status {
-    margin-top: 1rem;
-    font-size: 1.1rem;
-    color: #50e3c2;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-  }
-</style>
+<title>Simple Audio Test - Dahua DPB18-AI</title>
 </head>
 <body>
-  <h1>Audio Test</h1>
-  <button id="playBtn">Play Audio</button>
-  <div class="status" id="status">Paused</div>
-
-  <audio id="audio" preload="auto" tabindex="-1" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
-
-  <script>
-    const audio = document.getElementById('audio');
-    const playBtn = document.getElementById('playBtn');
-    const status = document.getElementById('status');
-
-    playBtn.addEventListener('click', () => {
-      if (audio.paused) {
-        audio.play();
-      } else {
-        audio.pause();
-      }
-    });
-
-    audio.addEventListener('play', () => {
-      playBtn.textContent = 'Pause Audio';
-      status.textContent = 'Playing';
-    });
-
-    audio.addEventListener('pause', () => {
-      playBtn.textContent = 'Play Audio';
-      status.textContent = 'Paused';
-    });
-
-    audio.addEventListener('ended', () => {
-      playBtn.textContent = 'Play Audio';
-      status.textContent = 'Ended';
-    });
-  </script>
+  <h2>Simple Audio Test</h2>
+  <p>Use the native audio controls below to test sound playback:</p>
+  <audio controls>
+    <source src="beep.wav" type="audio/wav" />
+    Your browser does not support the audio element.
+  </audio>
 </body>
 </html>
 
