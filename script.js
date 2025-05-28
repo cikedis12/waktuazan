@@ -1,49 +1,96 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const currentTimeElement = document.getElementById('current-time');
-    const fajrTimeElement = document.getElementById('fajr-time');
-    const dhuhrTimeElement = document.getElementById('dhuhr-time');
-    const asrTimeElement = document.getElementById('asr-time');
-    const maghribTimeElement = document.getElementById('maghrib-time');
-    const ishaTimeElement = document.getElementById('isha-time');
-    const azanSound = document.getElementById('azanSound');
-    const playAzanBtn = document.getElementById('playAzanBtn');
+document.addEventListener('DOMContentLoaded', function() {
+    var currentTimeElement = document.getElementById('current-time');
+    var fajrTimeElement = document.getElementById('fajr-time');
+    var dhuhrTimeElement = document.getElementById('dhuhr-time');
+    var asrTimeElement = document.getElementById('asr-time');
+    var maghribTimeElement = document.getElementById('maghrib-time');
+    var ishaTimeElement = document.getElementById('isha-time');
+    var azanSound = document.getElementById('azanSound');
+    var playAzanBtn = document.getElementById('playAzanBtn');
 
     // Shah Alam coordinates (approximate)
-    const latitude = 3.0738;
-    const longitude = 101.5183;
-    const method = 11; // JAKIM (Jabatan Kemajuan Islam Malaysia) method for Malaysia
+    var latitude = 3.0738;
+    var longitude = 101.5183;
+    var method = 11; // JAKIM (Jabatan Kemajuan Islam Malaysia) method for Malaysia
 
-    let azanTimesToday = {}; // To store today's azan times
+    var azanTimesToday = {}; // To store today's azan times
+
+    // --- Polyfill for String.prototype.padStart (Not in IE) ---
+    function _padStart(str, targetLength, padString) {
+        str = String(str);
+        targetLength = targetLength >> 0; // Floor targetLength
+        padString = String(typeof padString !== 'undefined' ? padString : ' ');
+        if (str.length > targetLength) {
+            return String(str);
+        }
+        targetLength = targetLength - str.length;
+        if (targetLength > padString.length) {
+            padString += padString.repeat(targetLength / padString.length); // Append to original string to ensure we have enough padding
+        }
+        return padString.slice(0, targetLength) + String(str);
+    }
+
+    // --- Basic XMLHttpRequest for API calls (Replaces fetch in IE) ---
+    function _fetchPolyfill(url, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    try {
+                        callback(null, JSON.parse(xhr.responseText));
+                    } catch (e) {
+                        callback(new Error('Failed to parse JSON: ' + e.message));
+                    }
+                } else {
+                    callback(new Error('HTTP Error: ' + xhr.status));
+                }
+            }
+        };
+        xhr.open('GET', url, true);
+        xhr.send();
+    }
 
     // --- Function to update current time ---
     function updateCurrentTime() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        currentTimeElement.textContent = `${hours}:${minutes}:${seconds}`;
+        var now = new Date();
+        var hours = _padStart(now.getHours(), 2, '0');
+        var minutes = _padStart(now.getMinutes(), 2, '0');
+        var seconds = _padStart(now.getSeconds(), 2, '0');
+        currentTimeElement.textContent = hours + ':' + minutes + ':' + seconds;
     }
 
-    // --- Function to fetch Azan times (Requires API Integration) ---
-    async function fetchAzanTimes() {
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1; // Month is 0-indexed
+    // --- Function to fetch Azan times ---
+    function fetchAzanTimes() {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1; // Month is 0-indexed
 
-        const apiUrl = `https://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${latitude}&longitude=${longitude}&method=${method}`;
+        var apiUrl = 'https://api.aladhan.com/v1/calendar/' + year + '/' + month + '?latitude=' + latitude + '&longitude=' + longitude + '&method=' + method;
 
-        try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        _fetchPolyfill(apiUrl, function(error, data) {
+            if (error) {
+                console.error('Error fetching Azan times:', error);
+                alert('Failed to fetch Azan times. Please check your internet connection or API settings.');
+                fajrTimeElement.textContent = '--:--';
+                dhuhrTimeElement.textContent = '--:--';
+                asrTimeElement.textContent = '--:--';
+                maghribTimeElement.textContent = '--:--';
+                ishaTimeElement.textContent = '--:--';
+                return;
             }
-            const data = await response.json();
 
-            // Find today's prayer times
-            const todayData = data.data.find(day => new Date(day.date.readable).getDate() === date.getDate());
+            var todayData = null;
+            var i;
+            // Manual loop for Array.prototype.find() (Not in IE)
+            for (i = 0; i < data.data.length; i++) {
+                if (new Date(data.data[i].date.readable).getDate() === date.getDate()) {
+                    todayData = data.data[i];
+                    break;
+                }
+            }
 
             if (todayData) {
-                const timings = todayData.timings;
+                var timings = todayData.timings;
                 azanTimesToday = {
                     fajr: timings.Fajr.split(' ')[0], // Remove timezone part
                     dhuhr: timings.Dhuhr.split(' ')[0],
@@ -65,21 +112,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 maghribTimeElement.textContent = '--:--';
                 ishaTimeElement.textContent = '--:--';
             }
-        } catch (error) {
-            console.error('Error fetching Azan times:', error);
-            alert('Failed to fetch Azan times. Please check your internet connection or API settings.');
-            fajrTimeElement.textContent = '--:--';
-            dhuhrTimeElement.textContent = '--:--';
-            asrTimeElement.textContent = '--:--';
-            maghribTimeElement.textContent = '--:--';
-            ishaTimeElement.textContent = '--:--';
-        }
+        });
     }
 
     // --- Function to play Azan sound ---
     function playAzanSound() {
         if (azanSound) {
-            azanSound.play().catch(e => console.error("Error playing sound:", e));
+            // Error handling for play() method in IE might be different, but catch() is standard ES5+
+            azanSound.play().catch(function(e) { console.error("Error playing sound:", e); });
         } else {
             console.warn("Azan sound element not found.");
         }
@@ -87,34 +127,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Function to set reminders and play Azan ---
     function checkAzanAndReminders() {
-        const now = new Date();
-        const currentHours = now.getHours();
-        const currentMinutes = now.getMinutes();
+        var now = new Date();
+        var currentHours = now.getHours();
+        var currentMinutes = now.getMinutes();
+        var currentSeconds = now.getSeconds();
 
-        for (const prayer in azanTimesToday) {
-            if (azanTimesToday.hasOwnProperty(prayer)) {
-                const [azanHours, azanMinutes] = azanTimesToday[prayer].split(':').map(Number);
+        var prayer;
+        for (prayer in azanTimesToday) {
+            if (Object.prototype.hasOwnProperty.call(azanTimesToday, prayer)) {
+                var azanTime = azanTimesToday[prayer];
+                var parts = azanTime.split(':').map(Number);
+                var azanHours = parts[0];
+                var azanMinutes = parts[1];
 
-                // Calculate time difference in minutes
-                const totalCurrentMinutes = currentHours * 60 + currentMinutes;
-                const totalAzanMinutes = azanHours * 60 + azanMinutes;
+                var totalCurrentMinutes = currentHours * 60 + currentMinutes;
+                var totalAzanMinutes = azanHours * 60 + azanMinutes;
 
-                // Reminder 5 minutes before
-                const reminderMinutes = totalAzanMinutes - 5;
-                if (totalCurrentMinutes === reminderMinutes) {
-                    if (!sessionStorage.getItem(`reminder-${prayer}-${currentHours}:${currentMinutes}`)) {
-                        alert(`Reminder: ${prayer} Azan in 5 minutes!`);
-                        console.log(`Reminder for ${prayer} at ${currentHours}:${currentMinutes}`);
-                        sessionStorage.setItem(`reminder-${prayer}-${currentHours}:${currentMinutes}`, 'set');
+                // Reminder 5 minutes before (check only at the start of the minute)
+                var reminderMinutes = totalAzanMinutes - 5;
+                if (totalCurrentMinutes === reminderMinutes && currentSeconds === 0) {
+                    if (!sessionStorage.getItem('reminder-' + prayer + '-' + currentHours + ':' + currentMinutes)) {
+                        alert('Reminder: ' + prayer + ' Azan in 5 minutes!');
+                        console.log('Reminder for ' + prayer + ' at ' + currentHours + ':' + currentMinutes);
+                        sessionStorage.setItem('reminder-' + prayer + '-' + currentHours + ':' + currentMinutes, 'set');
                     }
                 }
 
-                // Play Azan at actual time
-                if (totalCurrentMinutes === totalAzanMinutes) {
-                    if (!sessionStorage.getItem(`played-${prayer}-${currentHours}:${currentMinutes}`)) {
+                // Play Azan at actual time (check only at the start of the minute)
+                if (totalCurrentMinutes === totalAzanMinutes && currentSeconds === 0) {
+                    if (!sessionStorage.getItem('played-' + prayer + '-' + currentHours + ':' + currentMinutes)) {
                         playAzanSound();
-                        console.log(`Playing Azan for ${prayer} at ${currentHours}:${currentMinutes}`);
-                        sessionStorage.setItem(`played-${prayer}-${currentHours}:${currentMinutes}`, 'true');
+                        console.log('Playing Azan for ' + prayer + ' at ' + currentHours + ':' + currentMinutes);
+                        sessionStorage.setItem('played-' + prayer + '-' + currentHours + ':' + currentMinutes, 'true');
                     }
                 }
             }
@@ -129,14 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateCurrentTime, 1000);
 
     fetchAzanTimes();
-    setInterval(checkAzanAndReminders, 60 * 1000);
+    setInterval(checkAzanAndReminders, 1000);
 
     function setDailyAzanFetch() {
-        const now = new Date();
-        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
-        const timeToWait = tomorrow.getTime() - now.getTime();
+        var now = new Date();
+        var tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
+        var timeToWait = tomorrow.getTime() - now.getTime();
 
-        setTimeout(() => {
+        setTimeout(function() {
             fetchAzanTimes();
             sessionStorage.clear();
             setDailyAzanFetch();
