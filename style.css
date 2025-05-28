@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+    --primary-color: #4CAF50; /* Green */
+    --secondary-color: #66BB6A; /* Lighter Green */
+    --background-color: #f0f2f5;
+    --card-background: #ffffff;
+    --text-color: #333;
+    --light-text-color: #777;
+    --border-color: #e0e0e0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    box-sizing: border-box;
+    /* For 1080x1920 resolution, centering vertically/horizontally */
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; /* Prevent scrolling if content overflows slightly */
+}
+
+.container {
+    background-color: var(--card-background);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 90%; /* Adjust as needed for better fit on 1080px width */
+    max-width: 500px; /* Max width for a phone-like vertical layout */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh; /* Make container fill more of the screen height */
+    justify-content: space-between;
+}
+
+header {
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 2.2em;
+}
+
+.location {
+    font-size: 1.1em;
+    color: var(--light-text-color);
+    margin-bottom: 20px;
+}
+
+.location i {
+    margin-right: 8px;
+    color: var(--primary-color);
+}
+
+.clock-widget {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.clock-widget i {
+    margin-right: 10px;
+}
+
+.azan-times {
+    margin-bottom: 30px;
+    flex-grow: 1; /* Allow azan times section to take available space */
+}
+
+.azan-times h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+.azan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.azan-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--background-color);
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease-in-out;
+}
+
+.azan-item:hover {
+    transform: translateY(-3px);
+}
+
+.azan-name {
+    font-weight: 600;
+    font-size: 1.1em;
+    color: var(--text-color);
+}
+
+.azan-time {
+    font-weight: 600;
+    font-size: 1.2em;
+    color: var(--primary-color);
+}
+
+.controls {
+    margin-top: 30px;
+}
+
+#playAzanBtn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#playAzanBtn:hover {
+    background-color: #43A047; /* Slightly darker green */
+    transform: translateY(-2px);
+}
+
+#playAzanBtn i {
+    font-size: 1.3em;
+}
+
+footer {
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: var(--light-text-color);
+}
+
+/* Responsive adjustments for 1080x1920 (portrait) */
+@media (max-width: 1080px) and (max-height: 1920px) {
+    body {
+        padding: 20px;
+    }
+
+    .container {
+        width: 95%;
+        padding: 25px;
+    }
+
+    header h1 {
+        font-size: 2em;
+    }
+
+    .clock-widget {
+        font-size: 1.4em;
+        padding: 10px 18px;
+    }
+
+    .azan-times h2 {
+        font-size: 1.6em;
+    }
+
+    .azan-name {
+        font-size: 1em;
+    }
+
+    .azan-time {
+        font-size: 1.1em;
+    }
+
+    #playAzanBtn {
+        padding: 12px 20px;
+        font-size: 1.1em;
+    }
+}
+
+/* General smaller screen adjustments (e.g., phones in landscape or smaller tablets) */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    header h1 {
+        font-size: 1.8em;
+    }
+
+    .location {
+        font-size: 1em;
+    }
+
+    .clock-widget {
+        font-size: 1.2em;
+        padding: 8px 15px;
+    }
+
+    .azan-times h2 {
+        font-size: 1.5em;
+    }
+
+    .azan-item {
+        padding: 12px 15px;
+    }
+
+    .azan-name, .azan-time {
+        font-size: 1em;
+    }
+
+    #playAzanBtn {
+        padding: 10px 18px;
+        font-size: 1em;
+    }
+}
