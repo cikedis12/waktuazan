@@ -1,32 +1,90 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Legacy Sound Test</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Audio Test - Dahua DPB18-AI</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+  }
+  h1 {
+    margin-bottom: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  button {
+    background: linear-gradient(135deg, #4a90e2, #50e3c2);
+    border: none;
+    border-radius: 40px;
+    padding: 15px 30px;
+    font-size: 1.25rem;
+    color: #121212;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(80, 227, 194, 0.6);
+    transition: background 0.3s ease, transform 0.2s ease;
+    user-select: none;
+  }
+  button:hover {
+    background: linear-gradient(135deg, #50e3c2, #4a90e2);
+    transform: scale(1.05);
+  }
+  button:active {
+    transform: scale(0.95);
+  }
+  .status {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    color: #50e3c2;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+</style>
 </head>
+<body>
+  <h1>Audio Test</h1>
+  <button id="playBtn">Play Audio</button>
+  <div class="status" id="status">Paused</div>
 
-<body bgcolor="#f0f0f0" text="#000000">
+  <audio id="audio" preload="auto" tabindex="-1" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
 
-  <h1>Legacy HTML Sound Test</h1>
-  <p>This page uses old sound formats (.mid and .au) with HTML 3/4 compatible tags.</p>
+  <script>
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('playBtn');
+    const status = document.getElementById('status');
 
-  <!-- Background sound using bgsound (IE only) -->
-  <bgsound src="bgmusic.mid" loop="infinite" />
+    playBtn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    });
 
-  <!-- Manual play with EMBED -->
-  <h2>Manual Play</h2>
+    audio.addEventListener('play', () => {
+      playBtn.textContent = 'Pause Audio';
+      status.textContent = 'Playing';
+    });
 
-  <button onclick="document.getElementById('midSound').src='bgmusic.mid';">▶️ Play MIDI</button>
-  <br><br>
-  <button onclick="document.getElementById('auSound').src='sound.au';">🔊 Play AU</button>
+    audio.addEventListener('pause', () => {
+      playBtn.textContent = 'Play Audio';
+      status.textContent = 'Paused';
+    });
 
-  <br><br><br>
-
-  <!-- Hidden EMBED elements for sound playback -->
-  <embed id="midSound" src="" hidden="true" autostart="false" loop="false" />
-  <embed id="auSound" src="" hidden="true" autostart="false" loop="false" />
-
-  <p>Put <code>bgmusic.mid</code> and <code>sound.au</code> in the same folder as this HTML file.</p>
-
+    audio.addEventListener('ended', () => {
+      playBtn.textContent = 'Play Audio';
+      status.textContent = 'Ended';
+    });
+  </script>
 </body>
 </html>
+
