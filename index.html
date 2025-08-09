@@ -32,12 +32,19 @@
     .small{font-size:13px;color:#97c7d8}
     .credits{font-size:13px;color:#6fa7b8}
     #qrCode{margin-top:10px}
+    /* Mobile draw page specific styles */
+    .draw-page .app{padding:0;flex-direction:column;}
+    .draw-page .panel{display:none;}
+    .draw-page .canvas-wrap{padding:0;}
+    .draw-page #container{border-radius:0;}
+    .draw-page .footer{justify-content:center;padding:10px;background:rgba(11,18,40,0.8);}
+    .draw-page button{width:100%;max-width:200px;}
   </style>
   <script src="https://unpkg.com/konva@9/konva.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-<body>
+<body class="${isDrawPage ? 'draw-page' : ''}">
   <div class="app">
     <div class="panel">
       <h2 id="pageTitle">MetaDemo — Event Sketches</h2>
@@ -56,8 +63,8 @@
     const baseUrl = window.location.origin + window.location.pathname;
     const drawUrl = baseUrl + '#draw';
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    const width = isMobile ? window.innerWidth - 36 : Math.min(window.innerWidth - 420, 900);
-    const height = isMobile ? window.innerHeight - 200 : Math.min(window.innerHeight - 120, 700);
+    const width = isMobile ? window.innerWidth : Math.min(window.innerWidth - 420, 900);
+    const height = isMobile ? (isDrawPage ? window.innerHeight - 60 : window.innerHeight - 200) : Math.min(window.innerHeight - 120, 700);
     const partsConfig = [
       { id: 'head', label: 'Head', x: 0, y: -110, offset: {x:0, y:0} },
       { id: 'body', label: 'Body', x: 0, y: -20, offset: {x:0, y:0} },
@@ -140,7 +147,8 @@
       });
       state.sketches.push(sketch);
       localStorage.setItem('sketches', JSON.stringify(state.sketches));
-      window.location.href = baseUrl;
+      state.currentSketchIndex = state.sketches.length - 1; // Set to the latest sketch
+      window.location.href = baseUrl; // Redirect to homepage
     }
 
     function updateSpeed() {
@@ -195,8 +203,8 @@
     }
 
     window.addEventListener('resize', () => {
-      const w = isMobile ? window.innerWidth - 36 : Math.min(window.innerWidth - 420, 900);
-      const h = isMobile ? window.innerHeight - 200 : Math.min(window.innerHeight - 120, 700);
+      const w = isMobile ? window.innerWidth : Math.min(window.innerWidth - 420, 900);
+      const h = isMobile ? (isDrawPage ? window.innerHeight - 60 : window.innerHeight - 200) : Math.min(window.innerHeight - 120, 700);
       stage.width(w);
       stage.height(h);
       master.x(w/2);
@@ -206,8 +214,8 @@
 
     window.addEventListener('orientationchange', () => {
       setTimeout(() => {
-        const w = isMobile ? window.innerWidth - 36 : Math.min(window.innerWidth - 420, 900);
-        const h = isMobile ? window.innerHeight - 200 : Math.min(window.innerHeight - 120, 700);
+        const w = isMobile ? window.innerWidth : Math.min(window.innerWidth - 420, 900);
+        const h = isMobile ? (isDrawPage ? window.innerHeight - 60 : window.innerHeight - 200) : Math.min(window.innerHeight - 120, 700);
         stage.width(w);
         stage.height(h);
         master.x(w/2);
@@ -222,43 +230,10 @@
 
     if (isDrawPage) {
       pageTitle.innerText = 'MetaDemo — Draw Your Sketch';
-      controls.innerHTML = `
-        <div class="row" style="margin-top:6px">
-          <button id="undoBtn">Undo</button>
-          <button id="clearBtn">Clear</button>
-        </div>
-        <div class="row" style="margin-top:6px">
-          <button id="finishBtn">Finish Draw</button>
-        </div>
-        <div style="margin-top:8px">
-          <label class="small">Speed</label>
-          <input id="speed" type="range" min="0.25" max="2" value="1" step="0.05">
-        </div>
-        <p class="hint">Tip: Draw each limb where the part is located. Keep strokes simple for best results.</p>
-        <p class="credits">No server, all in-browser. Save the file and open with Chrome/Edge/Firefox/Safari.</p>
+      controls.innerHTML = ''; // Remove all controls except finish button
+      document.getElementById('footer').innerHTML = `
+        <button id="finishBtn">Finish Draw</button>
       `;
-      document.getElementById('undoBtn').onclick = () => {
-        if (!state.selectedPart) return;
-        const g = parts[state.selectedPart].group;
-        if (g.strokes && g.strokes.length > 0) {
-          const last = g.strokes.pop();
-          last.destroy();
-          layer.batchDraw();
-        }
-      };
-      document.getElementById('clearBtn').onclick = () => {
-        if (!state.selectedPart) return;
-        const g = parts[state.selectedPart].group;
-        while (g.strokes && g.strokes.length) {
-          const s = g.strokes.pop();
-          s.destroy();
-        }
-        layer.batchDraw();
-      };
-      document.getElementById('speed').oninput = (e) => {
-        state.speed = parseFloat(e.target.value);
-        updateSpeed();
-      };
       document.getElementById('finishBtn').onclick = saveSketch;
 
       selectPart('head');
