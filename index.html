@@ -2,26 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>MetaDemo-Lite — Event Sketch</title>
   <style>
     :root{ --panel-width:320px; --bg:#0f1720; --card:#0b1220; --accent:#7dd3fc }
     html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial;color:#e6eef6;background:linear-gradient(180deg,#071023 0%, #071a2a 100%)}
-    .app{display:flex;height:100vh;gap:18px;padding:18px;box-sizing:border-box}
+    .app{display:flex;height:100vh;gap:18px;padding:18px;box-sizing:border-box;flex-direction:column;}
+    @media (min-width: 768px) {
+      .app{flex-direction:row;}
+      :root{--panel-width:320px;}
+    }
+    @media (max-width: 767px) {
+      :root{--panel-width:100%;}
+      .panel{width:100%;max-width:100%;}
+      .canvas-wrap{flex:1;}
+    }
     .panel{width:var(--panel-width);background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
-    h2{margin:0 0 10px 0;font-size:16px}
-    .controls{display:flex;flex-direction:column;gap:8px}
-    button{background:#0b1228;color:#cfefff;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;cursor:pointer}
+    h2{margin:0 0 10px 0;font-size:18px}
+    .controls{display:flex;flex-direction:column;gap:10px}
+    button{background:#0b1228;color:#cfefff;border:1px solid rgba(255,255,255,0.04);padding:12px;border-radius:8px;cursor:pointer;font-size:16px}
     button.active{outline:2px solid rgba(125,211,252,0.2);box-shadow:0 4px 12px rgba(13,40,60,0.6)}
-    .canvas-wrap{flex:1;display:flex;flex-direction:column;gap:8px}
+    .canvas-wrap{flex:1;display:flex;flex-direction:column;gap:10px}
     #container{flex:1;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;display:flex;align-items:center;justify-content:center}
-    .hint{font-size:13px;color:#9fc9db}
-    .row{display:flex;gap:8px}
-    label{font-size:13px;color:#bfe7ff}
-    .footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+    .hint{font-size:14px;color:#9fc9db}
+    .row{display:flex;gap:10px}
+    label{font-size:14px;color:#bfe7ff}
+    .footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
     input[type=range]{width:100%}
-    .small{font-size:12px;color:#97c7d8}
-    .credits{font-size:12px;color:#6fa7b8}
+    .small{font-size:13px;color:#97c7d8}
+    .credits{font-size:13px;color:#6fa7b8}
     #qrCode{margin-top:10px}
   </style>
   <script src="https://unpkg.com/konva@9/konva.min.js"></script>
@@ -46,8 +55,9 @@
     const isDrawPage = window.location.hash === '#draw';
     const baseUrl = window.location.origin + window.location.pathname;
     const drawUrl = baseUrl + '#draw';
-    const width = Math.min(window.innerWidth - 420, 900);
-    const height = Math.min(window.innerHeight - 120, 700);
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    const width = isMobile ? window.innerWidth - 36 : Math.min(window.innerWidth - 420, 900);
+    const height = isMobile ? window.innerHeight - 200 : Math.min(window.innerHeight - 120, 700);
     const partsConfig = [
       { id: 'head', label: 'Head', x: 0, y: -110, offset: {x:0, y:0} },
       { id: 'body', label: 'Body', x: 0, y: -20, offset: {x:0, y:0} },
@@ -115,7 +125,7 @@
         const g = parts[partId]?.group;
         if (!g) return;
         strokes.forEach(points => {
-          const line = new Konva.Line({ points, stroke: 'black', strokeWidth: 5, lineCap: 'round', lineJoin: 'round', tension: 0.2 });
+          const line = new Konva.Line({ points, stroke: 'black', strokeWidth: isMobile ? 7 : 5, lineCap: 'round', lineJoin: 'round', tension: 0.2 });
           g.add(line);
           g.strokes.push(line);
         });
@@ -185,13 +195,25 @@
     }
 
     window.addEventListener('resize', () => {
-      const w = Math.min(window.innerWidth - 420, 900);
-      const h = Math.min(window.innerHeight - 120, 700);
+      const w = isMobile ? window.innerWidth - 36 : Math.min(window.innerWidth - 420, 900);
+      const h = isMobile ? window.innerHeight - 200 : Math.min(window.innerHeight - 120, 700);
       stage.width(w);
       stage.height(h);
       master.x(w/2);
       master.y(h/2 + 40);
       layer.batchDraw();
+    });
+
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        const w = isMobile ? window.innerWidth - 36 : Math.min(window.innerWidth - 420, 900);
+        const h = isMobile ? window.innerHeight - 200 : Math.min(window.innerHeight - 120, 700);
+        stage.width(w);
+        stage.height(h);
+        master.x(w/2);
+        master.y(h/2 + 40);
+        layer.batchDraw();
+      }, 100);
     });
 
     const controls = document.getElementById('controls');
@@ -213,9 +235,8 @@
           <input id="speed" type="range" min="0.25" max="2" value="1" step="0.05">
         </div>
         <p class="hint">Tip: Draw each limb where the part is located. Keep strokes simple for best results.</p>
-        <p class="credits">No server, all in-browser. Save the file and open with Chrome/Edge/Firefox.</p>
+        <p class="credits">No server, all in-browser. Save the file and open with Chrome/Edge/Firefox/Safari.</p>
       `;
-      // Set up event listeners after DOM elements are created
       document.getElementById('undoBtn').onclick = () => {
         if (!state.selectedPart) return;
         const g = parts[state.selectedPart].group;
@@ -240,11 +261,11 @@
       };
       document.getElementById('finishBtn').onclick = saveSketch;
 
-      // Initialize with a default selected part
       selectPart('head');
 
-      stage.on('mousedown touchstart', (evt) => {
+      stage.on('mousedown touchstart', (e) => {
         if (!state.drawMode) return;
+        e.evt.preventDefault();
         const pos = stage.getPointerPosition();
         const partId = detectPart(pos);
         if (!partId) return;
@@ -253,13 +274,14 @@
         const abs = g.getAbsolutePosition();
         const localX = pos.x - abs.x;
         const localY = pos.y - abs.y;
-        state.currentLine = new Konva.Line({ points: [localX, localY], stroke: 'black', strokeWidth: 5, lineCap: 'round', lineJoin: 'round', tension: 0.2 });
+        state.currentLine = new Konva.Line({ points: [localX, localY], stroke: 'black', strokeWidth: isMobile ? 7 : 5, lineCap: 'round', lineJoin: 'round', tension: 0.2 });
         g.add(state.currentLine);
         g.strokes.push(state.currentLine);
         layer.batchDraw();
       });
-      stage.on('mousemove touchmove', (evt) => {
+      stage.on('mousemove touchmove', (e) => {
         if (!state.drawMode || !state.currentLine) return;
+        e.evt.preventDefault();
         const g = parts[state.selectedPart].group;
         const pos = stage.getPointerPosition();
         const abs = g.getAbsolutePosition();
@@ -269,7 +291,8 @@
         state.currentLine.points(pts);
         layer.batchDraw();
       });
-      stage.on('mouseup touchend', () => {
+      stage.on('mouseup touchend', (e) => {
+        e.evt.preventDefault();
         if (state.currentLine) {
           state.currentLine = null;
         }
@@ -281,14 +304,14 @@
         controls.innerHTML = `
           <p class="hint">No sketches available. Scan to draw your sketch:</p>
           <div id="qrCode"></div>
-          <p class="credits">No server, all in-browser. Save the file and open with Chrome/Edge/Firefox.</p>
+          <p class="credits">No server, all in-browser. Save the file and open with Chrome/Edge/Firefox/Safari.</p>
         `;
       } else {
         footerLabel.innerText = `Sketch ${state.currentSketchIndex + 1}/${state.sketches.length}`;
         controls.innerHTML = `
           <p class="hint">Scan to draw a new sketch:</p>
           <div id="qrCode"></div>
-          <p class="credits">No server, all in-browser. Save the file and open with Chrome/Edge/Firefox.</p>
+          <p class="credits">No server, all in-browser. Save the file and open with Chrome/Edge/Firefox/Safari.</p>
         `;
         loadSketch(state.sketches[state.currentSketchIndex]);
         state.isPlaying = true;
