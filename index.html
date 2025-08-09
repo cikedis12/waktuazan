@@ -1,280 +1,310 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Waktu Azan CoinLabit</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <style type="text/css">
-    body {
-      margin: 0;
-      padding: 0;
-      width: 1080px;
-      height: 1920px;
-      background: linear-gradient(to bottom, #021b79, #0575e6);
-      color: #ffffff;
-      font-family: Arial, Helvetica, sans-serif;
-      text-align: center;
-    }
-    #container {
-      padding-top: 30px;
-    }
-    #logo {
-      width: 200px;
-      height: auto;
-      border-radius: 100px;
-      border: 5px solid #ffffff;
-      background-color: #021b79;
-    }
-    h1 {
-      font-size: 50px;
-      margin: 20px 0;
-      text-shadow: 2px 2px #000;
-    }
-    #clock {
-      font-size: 120px;
-      margin: 40px 0;
-    }
-    #nextAzan {
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-    #countdown {
-      font-size: 72px;
-      font-weight: bold;
-      margin: 20px auto;
-      background: #ffc107;
-      color: #000;
-      padding: 20px;
-      border-radius: 20px;
-      width: 600px;
-    }
-    #azanList {
-      margin: 40px auto;
-      width: 800px;
-      text-align: center;
-    }
-    .azanGrid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-    .azanBox {
-      width: 100%;
-      margin-bottom: 20px;
-      padding: 15px;
-      border-radius: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 28px;
-      color: #fff;
-    }
-    .subuhBox { border: 5px solid #00eaff; background-color: rgba(0, 234, 255, 0.1); }
-    .zohorBox { border: 5px solid #ffe600; background-color: rgba(255, 230, 0, 0.1); }
-    .asarBox { border: 5px solid #ff9800; background-color: rgba(255, 152, 0, 0.1); }
-    .maghribBox { border: 5px solid #f44336; background-color: rgba(244, 67, 54, 0.1); }
-    .isyakBox { border: 5px solid #9c27b0; background-color: rgba(156, 39, 176, 0.1); }
-    .azanBox img {
-      width: 40px;
-      height: 40px;
-      margin-right: 15px;
-    }
-    .azanBox .name { flex: 1; text-align: center; }
-    .azanBox .time { text-align: right; }
-    .azanBox.highlight {
-      box-shadow: 0 0 20px #ffc107;
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-    #donate {
-      margin-top: 40px;
-      font-size: 50px;
-      padding: 20px;
-      background-color: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      border-radius: 15px;
-      width: 80%;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    #popupReminder {
-      display: none;
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #ffc107;
-      color: #000;
-      padding: 20px 30px;
-      font-size: 28px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px #000;
-      z-index: 9999;
-    }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MetaDemo-Lite — Event Sketch</title>
+  <style>
+    :root{ --panel-width:320px; --bg:#0f1720; --card:#0b1220; --accent:#7dd3fc }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial;color:#e6eef6;background:linear-gradient(180deg,#071023 0%, #071a2a 100%)}
+    .app{display:flex;height:100vh;gap:18px;padding:18px;box-sizing:border-box}
+    .panel{width:var(--panel-width);background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    h2{margin:0 0 10px 0;font-size:16px}
+    .controls{display:flex;flex-direction:column;gap:8px}
+    button{background:#0b1228;color:#cfefff;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;cursor:pointer}
+    button.active{outline:2px solid rgba(125,211,252,0.2);box-shadow:0 4px 12px rgba(13,40,60,0.6)}
+    .canvas-wrap{flex:1;display:flex;flex-direction:column;gap:8px}
+    #container{flex:1;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;display:flex;align-items:center;justify-content:center}
+    .hint{font-size:13px;color:#9fc9db}
+    .row{display:flex;gap:8px}
+    label{font-size:13px;color:#bfe7ff}
+    .footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+    input[type=range]{width:100%}
+    .small{font-size:12px;color:#97c7d8}
+    .credits{font-size:12px;color:#6fa7b8}
+    #qrCode{margin-top:10px}
   </style>
-  <script type="text/javascript">
-    var azanTimes = [
-      { name: 'Subuh', time: '05:51' },
-      { name: 'Zohor', time: '13:12' },
-      { name: 'Asar', time: '16:38' },
-      { name: 'Maghrib', time: '19:21' },
-      { name: 'Isyak', time: '20:35' }
-    ];
-    var iconPaths = {
-      Subuh: "icons/subuh.png",
-      Zohor: "icons/zohor.png",
-      Asar: "icons/asar.png",
-      Maghrib: "icons/maghrib.png",
-      Isyak: "icons/isyak.png"
-    };
-    var beepPlayed = false;
-    var azanPlayed = false;
-
-    function pad(n) {
-      return (n < 10 ? '0' : '') + n;
-    }
-
-    function convertTo12Hour(hhmm) {
-      var parts = hhmm.split(':');
-      var hours = parseInt(parts[0], 10);
-      var minutes = parts[1];
-      var ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      return pad(hours) + ':' + minutes + ' ' + ampm;
-    }
-
-    function parseTime(hhmm) {
-      var now = new Date();
-      var parts = hhmm.split(':');
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(parts[0], 10), parseInt(parts[1], 10), 0);
-    }
-
-    function getNextAzan() {
-      var now = new Date();
-      for (var i = 0; i < azanTimes.length; i++) {
-        var azan = parseTime(azanTimes[i].time);
-        if (azan > now) {
-          return { index: i, name: azanTimes[i].name, time: azanTimes[i].time, date: azan };
-        }
-      }
-      var tomorrow = parseTime(azanTimes[0].time);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      return { index: 0, name: azanTimes[0].name, time: azanTimes[0].time, date: tomorrow };
-    }
-
-    function formatTime(sec) {
-      var h = Math.floor(sec / 3600);
-      var m = Math.floor((sec % 3600) / 60);
-      var s = sec % 60;
-      return pad(h) + ':' + pad(m) + ':' + pad(s);
-    }
-
-    function showPopupReminder(show) {
-      var popup = document.getElementById("popupReminder");
-      popup.style.display = show ? "block" : "none";
-    }
-
-    function updateDisplay() {
-      var now = new Date();
-      var h = now.getHours();
-      var ampm = h >= 12 ? 'PM' : 'AM';
-      h = h % 12;
-      h = h ? h : 12;
-      document.getElementById("clock").innerHTML = pad(h) + ":" + pad(now.getMinutes()) + ":" + pad(now.getSeconds()) + " " + ampm;
-
-      var nextAzan = getNextAzan();
-      var diff = Math.floor((nextAzan.date - now) / 1000);
-      if (diff < 0) diff = 0;
-
-      document.getElementById("nextAzan").innerHTML = "Next Azan: " + nextAzan.name + " (" + convertTo12Hour(nextAzan.time) + ")";
-      document.getElementById("countdown").innerHTML = formatTime(diff);
-
-      if (diff <= 300 && diff > 0) {
-        showPopupReminder(true);
-        if (!beepPlayed) {
-          document.getElementById("beepSound").src = "beep.mp3";
-          beepPlayed = true;
-        }
-      } else {
-        showPopupReminder(false);
-      }
-
-      if (diff <= 0 && !azanPlayed) {
-        document.getElementById("azanSound").src = "azan.mp3";
-        azanPlayed = true;
-      }
-
-      if (diff < -5) {
-        beepPlayed = false;
-        azanPlayed = false;
-      }
-
-      highlightNextAzan(nextAzan.index);
-      setTimeout(updateDisplay, 1000);
-    }
-
-    function showAzanList() {
-      var grid = document.createElement("div");
-      grid.className = "azanGrid";
-      for (var i = 0; i < azanTimes.length; i++) {
-        var nameKey = azanTimes[i].name.toLowerCase();
-        var box = document.createElement("div");
-        box.className = "azanBox " + nameKey + "Box";
-        box.id = "azanRow" + i;
-
-        var icon = document.createElement("img");
-        icon.src = iconPaths[azanTimes[i].name];
-        icon.alt = azanTimes[i].name;
-
-        var name = document.createElement("div");
-        name.className = "name";
-        name.innerHTML = azanTimes[i].name;
-
-        var time = document.createElement("div");
-        time.className = "time";
-        time.innerHTML = convertTo12Hour(azanTimes[i].time);
-
-        box.appendChild(icon);
-        box.appendChild(name);
-        box.appendChild(time);
-        grid.appendChild(box);
-      }
-      document.getElementById("azanList").appendChild(grid);
-    }
-
-    function highlightNextAzan(index) {
-      for (var i = 0; i < azanTimes.length; i++) {
-        var row = document.getElementById("azanRow" + i);
-        if (row) {
-          var nameKey = azanTimes[i].name.toLowerCase();
-          row.className = "azanBox " + nameKey + "Box";
-          if (i === index) {
-            row.className += " highlight";
-          }
-        }
-      }
-    }
-  </script>
+  <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-
-<body onload="updateDisplay();showAzanList();">
-  <div id="container">
-    <img id="logo" src="https://static.vecteezy.com/system/resources/previews/045/705/064/non_2x/islamic-mosque-design-illustration-masjid-black-color-icon-vector.jpg" alt="Masjid Icon">
-    <h1>Waktu Azan Shah Alam</h1>
-    <div id="clock">--:--:--</div>
-    <div id="nextAzan">Next Azan: -- (--:--)</div>
-    <div id="countdown">--:--:--</div>
-    <div id="azanList"></div>
-    <div id="donate">❤️ Sumbangan ikhlas anda dialu-alukan untuk operasi waktu azan CoinLabit. Terima kasih atas sokongan anda.</div>
-    <div id="popupReminder">⏰ 5 min before Azan - Sila bersedia untuk solat.</div>
-
-    <!-- Audio Elements -->
-    <embed id="beepSound" src="" hidden="true" autostart="false" loop="false" />
-    <embed id="azanSound" src="" hidden="true" autostart="false" loop="false" />
-
-    <!-- Ambient background sound -->
-    <embed src="ambient-masjid.mp3" hidden="true" autostart="true" loop="true" />
-
-    <p style="margin-top: 40px; font-size: 20px; color: #eee;">Surau SIRIM | HTML 4.01 Azan Display</p>
+<body>
+  <div class="app">
+    <div class="panel">
+      <h2 id="pageTitle">MetaDemo — Event Sketches</h2>
+      <div class="controls" id="controls"></div>
+    </div>
+    <div class="canvas-wrap">
+      <div id="container"></div>
+      <div class="footer">
+        <div class="small" id="footerLabel"></div>
+        <div class="small">Made with Konva + GSAP — minimalist animated sketch</div>
+      </div>
+    </div>
   </div>
+  <script>
+    const isDrawPage = window.location.hash === '#draw';
+    const baseUrl = window.location.origin + window.location.pathname;
+    const drawUrl = baseUrl + '#draw';
+    const width = Math.min(window.innerWidth - 420, 900);
+    const height = Math.min(window.innerHeight - 120, 700);
+    const partsConfig = [
+      { id: 'head', label: 'Head', x: 0, y: -110, offset: {x:0, y:0} },
+      { id: 'body', label: 'Body', x: 0, y: -20, offset: {x:0, y:0} },
+      { id: 'leftArm', label: 'Left Arm', x: -70, y: -20, offset: {x:10, y:0} },
+      { id: 'rightArm', label: 'Right Arm', x: 70, y: -20, offset: {x:-10, y:0} },
+      { id: 'leftLeg', label: 'Left Leg', x: -22, y: 90, offset: {x:8, y:0} },
+      { id: 'rightLeg', label: 'Right Leg', x: 22, y: 90, offset: {x:-8, y:0} },
+    ];
+    const animations = ['idle', 'walk', 'wave', 'jump'];
+    const state = {
+      selectedPart: null,
+      drawMode: true,
+      currentLine: null,
+      animHandles: [],
+      speed: 1,
+      isPlaying: false,
+      currentAnimIndex: 0,
+      currentSketchIndex: 0,
+      sketches: JSON.parse(localStorage.getItem('sketches') || '[]'),
+    };
+    const stage = new Konva.Stage({ container: 'container', width, height });
+    const layer = new Konva.Layer();
+    stage.add(layer);
+    const master = new Konva.Group({ x: width/2, y: height/2 + 40 });
+    layer.add(master);
+    const parts = {};
+    partsConfig.forEach(cfg => {
+      const g = new Konva.Group({ x: cfg.x, y: cfg.y, draggable: false, name: cfg.id });
+      g.strokes = [];
+      const helper = new Konva.Rect({ x:-80, y:-120, width:160, height:240, stroke:'#000', strokeWidth:0, visible: true });
+      g.add(helper);
+      g.offsetX(cfg.offset.x);
+      g.offsetY(cfg.offset.y);
+      master.add(g);
+      parts[cfg.id] = { group: g, config: cfg, helper };
+    });
+
+    function selectPart(id) {
+      state.selectedPart = id;
+      document.getElementById('footerLabel').innerText = isDrawPage ? `Selected part: ${partsConfig.find(x => x.id === id)?.label || 'None'}` : `Sketch ${state.currentSketchIndex + 1}/${state.sketches.length}`;
+      Object.values(parts).forEach(p => p.helper.stroke(id === p.config.id && isDrawPage ? '#7dd3fc' : '#000'));
+      layer.batchDraw();
+    }
+
+    function detectPart(pos) {
+      for (const part of Object.values(parts)) {
+        const helper = part.helper;
+        if (!helper) continue;
+        const abs = helper.getAbsolutePosition();
+        const rect = { x: abs.x, y: abs.y, width: helper.width(), height: helper.height() };
+        if (pos.x >= rect.x && pos.x <= rect.x + rect.width && pos.y >= rect.y && pos.y <= rect.y + rect.height) {
+          return part.config.id;
+        }
+      }
+      return null;
+    }
+
+    function loadSketch(sketch) {
+      Object.values(parts).forEach(p => {
+        while (p.group.strokes.length) {
+          p.group.strokes.pop().destroy();
+        }
+      });
+      Object.entries(sketch || {}).forEach(([partId, strokes]) => {
+        const g = parts[partId]?.group;
+        if (!g) return;
+        strokes.forEach(points => {
+          const line = new Konva.Line({ points, stroke: 'black', strokeWidth: 5, lineCap: 'round', lineJoin: 'round', tension: 0.2 });
+          g.add(line);
+          g.strokes.push(line);
+        });
+      });
+      layer.batchDraw();
+    }
+
+    function saveSketch() {
+      const sketch = {};
+      Object.values(parts).forEach(p => {
+        sketch[p.config.id] = p.group.strokes.map(line => line.points());
+      });
+      state.sketches.push(sketch);
+      localStorage.setItem('sketches', JSON.stringify(state.sketches));
+      window.location.href = baseUrl;
+    }
+
+    function updateSpeed() {
+      gsap.globalTimeline.timeScale(state.speed);
+    }
+
+    function stopAllTweens() {
+      gsap.killTweensOf('*');
+      Object.values(parts).forEach(p => p.group.rotation(0));
+      master.y(height/2 + 40);
+      layer.batchDraw();
+    }
+
+    function playAnimation(name) {
+      stopAllTweens();
+      updateSpeed();
+      const leftLeg = parts.leftLeg.group;
+      const rightLeg = parts.rightLeg.group;
+      const leftArm = parts.leftArm.group;
+      const rightArm = parts.rightArm.group;
+      const body = parts.body.group;
+      if (name === 'walk') {
+        gsap.to(leftLeg, { rotation: 30, duration: 0.32, ease: 'sine.inOut', repeat: -1, yoyo: true, onUpdate: () => layer.batchDraw() });
+        gsap.to(rightLeg, { rotation: -30, duration: 0.32, ease: 'sine.inOut', repeat: -1, yoyo: true, delay: 0.16, onUpdate: () => layer.batchDraw() });
+        gsap.to(body, { rotation: 6, duration: 0.64, ease: 'sine.inOut', repeat: -1, yoyo: true, onUpdate: () => layer.batchDraw() });
+        gsap.to(master, { y: master.y() - 8, duration: 0.64, ease: 'sine.inOut', repeat: -1, yoyo: true, onUpdate: () => layer.batchDraw() });
+      } else if (name === 'wave') {
+        gsap.to(rightArm, { rotation: -70, duration: 0.28, ease: 'sine.inOut', repeat: -1, yoyo: true, onUpdate: () => layer.batchDraw() });
+        gsap.to(body, { rotation: 4, duration: 0.6, ease: 'sine.inOut', repeat: -1, yoyo: true, onUpdate: () => layer.batchDraw() });
+      } else if (name === 'jump') {
+        gsap.to(master, { y: master.y() - 60, duration: 0.35, ease: 'power2.out', repeat: -1, yoyo: true, onUpdate: () => layer.batchDraw() });
+        gsap.to(leftLeg, { rotation: 10, duration: 0.35, ease: 'sine.inOut', repeat: -1, yoyo: true, onUpdate: () => layer.batchDraw() });
+        gsap.to(rightLeg, { rotation: -10, duration: 0.35, ease: 'sine.inOut', repeat: -1, yoyo: true, onUpdate: () => layer.batchDraw() });
+      } else {
+        gsap.to(body, { rotation: 3, duration: 1.2, ease: 'sine.inOut', repeat: -1, yoyo: true, onUpdate: () => layer.batchDraw() });
+        gsap.to(master, { y: master.y() - 6, duration: 1.2, ease: 'sine.inOut', repeat: -1, yoyo: true, onUpdate: () => layer.batchDraw() });
+      }
+    }
+
+    function playNextAnimation() {
+      if (!state.isPlaying || state.sketches.length === 0) return;
+      stopAllTweens();
+      const anim = animations[state.currentAnimIndex];
+      playAnimation(anim);
+      state.currentAnimIndex = (state.currentAnimIndex + 1) % animations.length;
+      if (state.currentAnimIndex === 0) {
+        state.currentSketchIndex = (state.currentSketchIndex + 1) % state.sketches.length;
+        loadSketch(state.sketches[state.currentSketchIndex]);
+      }
+      document.getElementById('footerLabel').innerText = `Sketch ${state.currentSketchIndex + 1}/${state.sketches.length}`;
+      gsap.delayedCall(3 / state.speed, playNextAnimation);
+    }
+
+    window.addEventListener('resize', () => {
+      const w = Math.min(window.innerWidth - 420, 900);
+      const h = Math.min(window.innerHeight - 120, 700);
+      stage.width(w);
+      stage.height(h);
+      master.x(w/2);
+      master.y(h/2 + 40);
+      layer.batchDraw();
+    });
+
+    const controls = document.getElementById('controls');
+    const pageTitle = document.getElementById('pageTitle');
+    const footerLabel = document.getElementById('footerLabel');
+
+    if (isDrawPage) {
+      pageTitle.innerText = 'MetaDemo — Draw Your Sketch';
+      controls.innerHTML = `
+        <div class="row" style="margin-top:6px">
+          <button id="undoBtn">Undo</button>
+          <button id="clearBtn">Clear</button>
+        </div>
+        <div class="row" style="margin-top:6px">
+          <button id="finishBtn">Finish Draw</button>
+        </div>
+        <div style="margin-top:8px">
+          <label class="small">Speed</label>
+          <input id="speed" type="range" min="0.25" max="2" value="1" step="0.05">
+        </div>
+        <p class="hint">Tip: Draw each limb where the part is located. Keep strokes simple for best results.</p>
+        <p class="credits">No server, all in-browser. Save the file and open with Chrome/Edge/Firefox.</p>
+      `;
+      // Set up event listeners after DOM elements are created
+      document.getElementById('undoBtn').onclick = () => {
+        if (!state.selectedPart) return;
+        const g = parts[state.selectedPart].group;
+        if (g.strokes && g.strokes.length > 0) {
+          const last = g.strokes.pop();
+          last.destroy();
+          layer.batchDraw();
+        }
+      };
+      document.getElementById('clearBtn').onclick = () => {
+        if (!state.selectedPart) return;
+        const g = parts[state.selectedPart].group;
+        while (g.strokes && g.strokes.length) {
+          const s = g.strokes.pop();
+          s.destroy();
+        }
+        layer.batchDraw();
+      };
+      document.getElementById('speed').oninput = (e) => {
+        state.speed = parseFloat(e.target.value);
+        updateSpeed();
+      };
+      document.getElementById('finishBtn').onclick = saveSketch;
+
+      // Initialize with a default selected part
+      selectPart('head');
+
+      stage.on('mousedown touchstart', (evt) => {
+        if (!state.drawMode) return;
+        const pos = stage.getPointerPosition();
+        const partId = detectPart(pos);
+        if (!partId) return;
+        selectPart(partId);
+        const g = parts[partId].group;
+        const abs = g.getAbsolutePosition();
+        const localX = pos.x - abs.x;
+        const localY = pos.y - abs.y;
+        state.currentLine = new Konva.Line({ points: [localX, localY], stroke: 'black', strokeWidth: 5, lineCap: 'round', lineJoin: 'round', tension: 0.2 });
+        g.add(state.currentLine);
+        g.strokes.push(state.currentLine);
+        layer.batchDraw();
+      });
+      stage.on('mousemove touchmove', (evt) => {
+        if (!state.drawMode || !state.currentLine) return;
+        const g = parts[state.selectedPart].group;
+        const pos = stage.getPointerPosition();
+        const abs = g.getAbsolutePosition();
+        const localX = pos.x - abs.x;
+        const localY = pos.y - abs.y;
+        const pts = state.currentLine.points().concat([localX, localY]);
+        state.currentLine.points(pts);
+        layer.batchDraw();
+      });
+      stage.on('mouseup touchend', () => {
+        if (state.currentLine) {
+          state.currentLine = null;
+        }
+      });
+    } else {
+      pageTitle.innerText = 'MetaDemo — Event Sketches';
+      if (state.sketches.length === 0) {
+        footerLabel.innerText = 'No sketches yet. Scan to draw one!';
+        controls.innerHTML = `
+          <p class="hint">No sketches available. Scan to draw your sketch:</p>
+          <div id="qrCode"></div>
+          <p class="credits">No server, all in-browser. Save the file and open with Chrome/Edge/Firefox.</p>
+        `;
+      } else {
+        footerLabel.innerText = `Sketch ${state.currentSketchIndex + 1}/${state.sketches.length}`;
+        controls.innerHTML = `
+          <p class="hint">Scan to draw a new sketch:</p>
+          <div id="qrCode"></div>
+          <p class="credits">No server, all in-browser. Save the file and open with Chrome/Edge/Firefox.</p>
+        `;
+        loadSketch(state.sketches[state.currentSketchIndex]);
+        state.isPlaying = true;
+        playNextAnimation();
+      }
+      new QRCode(document.getElementById('qrCode'), {
+        text: drawUrl,
+        width: 128,
+        height: 128,
+        colorDark: '#e6eef6',
+        colorLight: '#0b1228',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    layer.draw();
+  </script>
 </body>
 </html>
