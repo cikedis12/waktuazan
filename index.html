@@ -52,7 +52,7 @@
     </div>
     <div class="canvas-wrap">
       <div id="container"></div>
-      <div class="footer">
+      <div class="footer" id="footer">
         <div class="small" id="footerLabel"></div>
         <div class="small">Made with Konva + GSAP — minimalist animated sketch</div>
       </div>
@@ -107,6 +107,7 @@
       document.getElementById('footerLabel').innerText = isDrawPage ? `Selected part: ${partsConfig.find(x => x.id === id)?.label || 'None'}` : `Sketch ${state.currentSketchIndex + 1}/${state.sketches.length}`;
       Object.values(parts).forEach(p => p.helper.stroke(id === p.config.id && isDrawPage ? '#7dd3fc' : '#000'));
       layer.batchDraw();
+      console.log(`Selected part: ${id}`); // Debug log
     }
 
     function detectPart(pos) {
@@ -116,9 +117,11 @@
         const abs = helper.getAbsolutePosition();
         const rect = { x: abs.x, y: abs.y, width: helper.width(), height: helper.height() };
         if (pos.x >= rect.x && pos.x <= rect.x + rect.width && pos.y >= rect.y && pos.y <= rect.y + rect.height) {
+          console.log(`Detected part: ${part.config.id} at position (${pos.x}, ${pos.y})`); // Debug log
           return part.config.id;
         }
       }
+      console.log('No part detected at position:', pos); // Debug log
       return null;
     }
 
@@ -147,8 +150,8 @@
       });
       state.sketches.push(sketch);
       localStorage.setItem('sketches', JSON.stringify(state.sketches));
-      state.currentSketchIndex = state.sketches.length - 1; // Set to the latest sketch
-      window.location.href = baseUrl; // Redirect to homepage
+      state.currentSketchIndex = state.sketches.length - 1;
+      window.location.href = baseUrl;
     }
 
     function updateSpeed() {
@@ -236,12 +239,14 @@
       `;
       document.getElementById('finishBtn').onclick = saveSketch;
 
+      // Initialize with head selected
       selectPart('head');
 
       stage.on('mousedown touchstart', (e) => {
         if (!state.drawMode) return;
         e.evt.preventDefault();
         const pos = stage.getPointerPosition();
+        console.log('Touch/Mouse start at:', pos); // Debug log
         const partId = detectPart(pos);
         if (!partId) return;
         selectPart(partId);
@@ -249,13 +254,22 @@
         const abs = g.getAbsolutePosition();
         const localX = pos.x - abs.x;
         const localY = pos.y - abs.y;
-        state.currentLine = new Konva.Line({ points: [localX, localY], stroke: 'black', strokeWidth: isMobile ? 7 : 5, lineCap: 'round', lineJoin: 'round', tension: 0.2 });
+        state.currentLine = new Konva.Line({ 
+          points: [localX, localY], 
+          stroke: 'black', 
+          strokeWidth: isMobile ? 7 : 5, 
+          lineCap: 'round', 
+          lineJoin: 'round', 
+          tension: 0.2 
+        });
         g.add(state.currentLine);
         g.strokes.push(state.currentLine);
         layer.batchDraw();
+        console.log(`Started drawing on ${partId} at local (${localX}, ${localY})`); // Debug log
       });
+
       stage.on('mousemove touchmove', (e) => {
-        if (!state.drawMode || !state.currentLine) return;
+        if (!state.drawMode || !state.currentLine || !state.selectedPart) return;
         e.evt.preventDefault();
         const g = parts[state.selectedPart].group;
         const pos = stage.getPointerPosition();
@@ -265,11 +279,14 @@
         const pts = state.currentLine.points().concat([localX, localY]);
         state.currentLine.points(pts);
         layer.batchDraw();
+        console.log(`Drawing on ${state.selectedPart} at local (${localX}, ${localY})`); // Debug log
       });
+
       stage.on('mouseup touchend', (e) => {
         e.evt.preventDefault();
         if (state.currentLine) {
           state.currentLine = null;
+          console.log('Drawing ended'); // Debug log
         }
       });
     } else {
